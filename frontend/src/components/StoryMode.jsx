@@ -1,32 +1,14 @@
-import React, { useState } from 'react';
-import { ArrowRight, AlertTriangle, Zap, CheckCircle2, Flame, ShieldAlert, Database, Terminal, Play, Sparkles } from 'lucide-react';
+import React from 'react';
+import { ArrowRight, Sparkles, CheckCircle2 } from 'lucide-react';
 import { sounds } from '../audio/SoundEffects';
 import confetti from 'canvas-confetti';
+import {
+  NoBufferCollisionSim,
+  NaiveBufferOverflowSim,
+  LinuxBackpressureSim
+} from './story/StorySimulators';
 
 export default function StoryMode({ currentChapter, onSelectChapter, onLaunchFullSim }) {
-  const [unboundedCount, setUnboundedCount] = useState(3);
-  const [hasCrashed, setHasCrashed] = useState(false);
-
-  const handleSimulateFlood = () => {
-    sounds.playAlert();
-    let count = unboundedCount;
-    const interval = setInterval(() => {
-      count += 8;
-      setUnboundedCount(count);
-      if (count >= 40) {
-        clearInterval(interval);
-        setHasCrashed(true);
-        sounds.playAlert();
-      }
-    }, 80);
-  };
-
-  const handleResetFlood = () => {
-    sounds.playClick();
-    setUnboundedCount(3);
-    setHasCrashed(false);
-  };
-
   const chapters = [
     { id: 1, tag: 'CHAPTER 01', title: 'THE COLLISION', desc: 'The Unsynchronized Disaster' },
     { id: 2, tag: 'CHAPTER 02', title: 'THE BUFFER DILEMMA', desc: 'Why Naive Queues Crash' },
@@ -90,9 +72,9 @@ export default function StoryMode({ currentChapter, onSelectChapter, onLaunchFul
           </div>
 
           {/* Blocky Problem Cards Grid */}
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-5 font-mono">
             {/* Thread A */}
-            <div className="p-5 rounded-2xl border-2 border-emerald-500 bg-emerald-50/40 space-y-3 font-mono">
+            <div className="p-5 rounded-2xl border-2 border-emerald-500 bg-emerald-50/40 space-y-3">
               <div className="flex items-center justify-between">
                 <span className="text-xs font-black uppercase text-emerald-800 bg-emerald-200/70 px-2 py-0.5 rounded">
                   PRODUCER (WRITER)
@@ -106,7 +88,7 @@ export default function StoryMode({ currentChapter, onSelectChapter, onLaunchFul
             </div>
 
             {/* Thread B */}
-            <div className="p-5 rounded-2xl border-2 border-amber-500 bg-amber-50/40 space-y-3 font-mono">
+            <div className="p-5 rounded-2xl border-2 border-amber-500 bg-amber-50/40 space-y-3">
               <div className="flex items-center justify-between">
                 <span className="text-xs font-black uppercase text-amber-800 bg-amber-200/70 px-2 py-0.5 rounded">
                   CONSUMER (READER)
@@ -120,6 +102,11 @@ export default function StoryMode({ currentChapter, onSelectChapter, onLaunchFul
             </div>
           </div>
 
+          {/* ─── LIVE VISUAL SIMULATOR: UNBUFFERED CRASH ─── */}
+          <section aria-label="Visual Collision Demonstration">
+            <NoBufferCollisionSim />
+          </section>
+
           {/* The Dilemma Callout */}
           <div className="p-5 rounded-2xl border-2 border-slate-900 bg-slate-50 font-mono space-y-2">
             <span className="text-xs font-black uppercase text-slate-400 block tracking-wider">THE CORE QUESTION</span>
@@ -132,8 +119,8 @@ export default function StoryMode({ currentChapter, onSelectChapter, onLaunchFul
           </div>
 
           {/* Action Row */}
-          <div className="flex flex-col sm:flex-row items-center justify-between gap-4 pt-4 border-t-2 border-slate-100">
-            <span className="font-mono text-xs text-slate-400 font-bold">
+          <div className="flex flex-col sm:flex-row items-center justify-between gap-4 pt-4 border-t-2 border-slate-100 font-mono">
+            <span className="text-xs text-slate-400 font-bold">
               STEP 1 OF 3 // WHAT IS THE PROBLEM?
             </span>
             <button
@@ -141,7 +128,7 @@ export default function StoryMode({ currentChapter, onSelectChapter, onLaunchFul
                 sounds.playClick();
                 onSelectChapter(2);
               }}
-              className="w-full sm:w-auto px-6 py-3.5 rounded-xl bg-slate-900 hover:bg-slate-800 text-white font-mono font-black text-sm uppercase tracking-wide flex items-center justify-center gap-2 shadow-[4px_4px_0px_0px_rgba(2,132,199,1)] active:translate-x-0.5 active:translate-y-0.5"
+              className="w-full sm:w-auto px-6 py-3.5 rounded-xl bg-slate-900 hover:bg-slate-800 text-white font-black text-sm uppercase tracking-wide flex items-center justify-center gap-2 shadow-[4px_4px_0px_0px_rgba(2,132,199,1)] active:translate-x-0.5 active:translate-y-0.5"
             >
               <span>SEE WHY NAIVE BUFFERS CRASH</span>
               <ArrowRight className="w-4 h-4" />
@@ -166,101 +153,36 @@ export default function StoryMode({ currentChapter, onSelectChapter, onLaunchFul
             </p>
           </div>
 
-          {/* Interactive Disaster Playground */}
-          <div className="p-6 rounded-2xl border-2 border-slate-900 bg-slate-50 font-mono space-y-4">
-            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 pb-3 border-b border-slate-200">
-              <div>
-                <span className="text-xs font-black uppercase text-slate-900">
-                  INTERACTIVE LAB: UNBOUNDED BUFFER SIMULATION
-                </span>
-                <p className="text-[11px] text-slate-500">
-                  Click below to inject data without backpressure controls
-                </p>
-              </div>
+          {/* ─── LIVE VISUAL SIMULATOR: NAIVE ATTEMPTS (OOM & OVERWRITE) ─── */}
+          <section aria-label="Naive Buffer Overflow Demonstration">
+            <NaiveBufferOverflowSim />
+          </section>
 
-              <div className="flex items-center gap-2">
-                <button
-                  onClick={handleSimulateFlood}
-                  disabled={hasCrashed}
-                  className={`px-3 py-1.5 rounded-lg font-bold text-xs uppercase flex items-center gap-1.5 shadow-sm ${
-                    hasCrashed
-                      ? 'bg-slate-200 text-slate-400 cursor-not-allowed'
-                      : 'bg-rose-600 hover:bg-rose-500 text-white'
-                  }`}
-                >
-                  <Flame className="w-3.5 h-3.5" />
-                  <span>Flood Buffer</span>
-                </button>
-
-                {hasCrashed && (
-                  <button
-                    onClick={handleResetFlood}
-                    className="px-3 py-1.5 rounded-lg bg-slate-900 text-white font-bold text-xs uppercase"
-                  >
-                    Reset
-                  </button>
-                )}
-              </div>
-            </div>
-
-            {/* Visual Overflow Bucket */}
-            <div className="space-y-2">
-              <div className="flex justify-between text-xs font-bold">
-                <span>BUFFER MEMORY ALLOCATION:</span>
-                <span className={hasCrashed ? 'text-rose-600 font-black animate-pulse' : 'text-slate-700'}>
-                  {unboundedCount * 4} KB ALLOCATED {hasCrashed ? '(KERNEL OOM CRASH 💥)' : ''}
-                </span>
-              </div>
-
-              <div className="h-6 w-full bg-slate-200 rounded-lg overflow-hidden p-0.5 border border-slate-300">
-                <div
-                  className={`h-full rounded transition-all duration-200 ${
-                    hasCrashed ? 'bg-rose-600 animate-pulse' : 'bg-gradient-to-r from-sky-500 to-rose-500'
-                  }`}
-                  style={{ width: `${Math.min(100, (unboundedCount / 40) * 100)}%` }}
-                />
-              </div>
-
-              {hasCrashed ? (
-                <div className="p-3 rounded-xl bg-rose-100 border border-rose-300 text-rose-800 text-xs font-bold flex items-center gap-2">
-                  <AlertTriangle className="w-4 h-4 text-rose-600 shrink-0" />
-                  <span>
-                    SYSTEM PANIC: Linux Out-Of-Memory (OOM) killer invoked! Process killed to save system.
-                  </span>
-                </div>
-              ) : (
-                <div className="text-[11px] text-slate-500">
-                  Notice: As writer floods, the buffer grows indefinitely. In real systems, this freezes the machine.
-                </div>
-              )}
-            </div>
-          </div>
-
-          {/* 2 Flawed Approaches */}
+          {/* 2 Flawed Approaches Technical Cards */}
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4 font-mono text-xs">
-            <div className="p-4 rounded-xl border border-rose-300 bg-rose-50/50 space-y-1.5">
-              <span className="font-extrabold text-rose-800 uppercase block">❌ FLAWED APPROACH A: UNBOUNDED BUFFER</span>
-              <p className="text-slate-600">
-                Buffer grows infinitely in RAM. Fast writer eats all available memory until the computer freezes and crashes.
+            <div className="p-4 rounded-xl border-2 border-rose-300 bg-rose-50/50 space-y-1.5 shadow-sm">
+              <span className="font-black text-rose-800 uppercase block">❌ FLAWED APPROACH A: UNBOUNDED BUFFER</span>
+              <p className="text-slate-600 leading-normal">
+                Buffer grows infinitely in RAM. Fast writer eats all available memory until the operating system invokes OOM Killer and forces a <code className="bg-white px-1 font-bold text-rose-700">SIGKILL</code>.
               </p>
             </div>
 
-            <div className="p-4 rounded-xl border border-rose-300 bg-rose-50/50 space-y-1.5">
-              <span className="font-extrabold text-rose-800 uppercase block">❌ FLAWED APPROACH B: DROP PACKETS SILENTLY</span>
-              <p className="text-slate-600">
-                Buffer fixed, but discards overflow. Catastrophic: you lose critical log lines and your analysis produces garbage.
+            <div className="p-4 rounded-xl border-2 border-rose-300 bg-rose-50/50 space-y-1.5 shadow-sm">
+              <span className="font-black text-rose-800 uppercase block">❌ FLAWED APPROACH B: DROP PACKETS SILENTLY</span>
+              <p className="text-slate-600 leading-normal">
+                Buffer fixed, but discards overflow or overwrites unread memory. Catastrophic: you lose critical log lines and your downstream analysis produces corrupted garbage.
               </p>
             </div>
           </div>
 
           {/* Action Row */}
-          <div className="flex flex-col sm:flex-row items-center justify-between gap-4 pt-4 border-t-2 border-slate-100">
+          <div className="flex flex-col sm:flex-row items-center justify-between gap-4 pt-4 border-t-2 border-slate-100 font-mono">
             <button
               onClick={() => {
                 sounds.playClick();
                 onSelectChapter(1);
               }}
-              className="text-xs font-mono font-bold text-slate-500 hover:text-slate-900"
+              className="text-xs font-bold text-slate-500 hover:text-slate-900"
             >
               ← BACK TO CHAPTER 1
             </button>
@@ -270,7 +192,7 @@ export default function StoryMode({ currentChapter, onSelectChapter, onLaunchFul
                 sounds.playClick();
                 onSelectChapter(3);
               }}
-              className="w-full sm:w-auto px-6 py-3.5 rounded-xl bg-slate-900 hover:bg-slate-800 text-white font-mono font-black text-sm uppercase tracking-wide flex items-center justify-center gap-2 shadow-[4px_4px_0px_0px_rgba(2,132,199,1)] active:translate-x-0.5 active:translate-y-0.5"
+              className="w-full sm:w-auto px-6 py-3.5 rounded-xl bg-slate-900 hover:bg-slate-800 text-white font-black text-sm uppercase tracking-wide flex items-center justify-center gap-2 shadow-[4px_4px_0px_0px_rgba(2,132,199,1)] active:translate-x-0.5 active:translate-y-0.5"
             >
               <span>SEE HOW LINUX SOLVED IT</span>
               <ArrowRight className="w-4 h-4" />
@@ -295,6 +217,11 @@ export default function StoryMode({ currentChapter, onSelectChapter, onLaunchFul
             </p>
           </div>
 
+          {/* ─── LIVE VISUAL SIMULATOR: LINUX BACKPRESSURE + WAIT QUEUES ─── */}
+          <section aria-label="Linux Backpressure Demonstration">
+            <LinuxBackpressureSim />
+          </section>
+
           {/* The 2 Rules Blocky Cards */}
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6 font-mono">
             {/* Rule 1 */}
@@ -311,7 +238,7 @@ export default function StoryMode({ currentChapter, onSelectChapter, onLaunchFul
               </h3>
               <p className="text-xs text-slate-600 leading-relaxed">
                 When Process A fills all 16 pages, its <code className="bg-white px-1.5 py-0.5 rounded border border-sky-200 font-bold">sys_write()</code> blocks.
-                The kernel transitions it to <strong className="text-sky-900">TASK_INTERRUPTIBLE</strong> on <code className="bg-white px-1 rounded">pipe-&gt;wr_wait</code>. 
+                The kernel transitions it to <strong className="text-sky-900">TASK_INTERRUPTIBLE</strong> on <code className="bg-white px-1 rounded font-bold">pipe-&gt;wr_wait</code>. 
                 Zero CPU cycles wasted.
               </p>
               <div className="pt-2 text-[11px] text-sky-800 font-bold flex items-center gap-1.5">
@@ -334,7 +261,7 @@ export default function StoryMode({ currentChapter, onSelectChapter, onLaunchFul
               </h3>
               <p className="text-xs text-slate-600 leading-relaxed">
                 When the pipe runs dry, Process B's <code className="bg-white px-1.5 py-0.5 rounded border border-emerald-200 font-bold">sys_read()</code> blocks.
-                The kernel transitions it to <strong className="text-emerald-900">TASK_INTERRUPTIBLE</strong> on <code className="bg-white px-1 rounded">pipe-&gt;rd_wait</code>.
+                The kernel transitions it to <strong className="text-emerald-900">TASK_INTERRUPTIBLE</strong> on <code className="bg-white px-1 rounded font-bold">pipe-&gt;rd_wait</code>.
                 No busy spinloop burning your battery.
               </p>
               <div className="pt-2 text-[11px] text-emerald-800 font-bold flex items-center gap-1.5">
@@ -362,13 +289,13 @@ export default function StoryMode({ currentChapter, onSelectChapter, onLaunchFul
           </div>
 
           {/* Action Row */}
-          <div className="flex flex-col sm:flex-row items-center justify-between gap-4 pt-4 border-t-2 border-slate-100">
+          <div className="flex flex-col sm:flex-row items-center justify-between gap-4 pt-4 border-t-2 border-slate-100 font-mono">
             <button
               onClick={() => {
                 sounds.playClick();
                 onSelectChapter(2);
               }}
-              className="text-xs font-mono font-bold text-slate-500 hover:text-slate-900"
+              className="text-xs font-bold text-slate-500 hover:text-slate-900"
             >
               ← BACK TO CHAPTER 2
             </button>
@@ -383,7 +310,7 @@ export default function StoryMode({ currentChapter, onSelectChapter, onLaunchFul
                 });
                 onSelectChapter(4);
               }}
-              className="w-full sm:w-auto px-8 py-4 rounded-xl bg-sky-600 hover:bg-sky-500 text-white font-mono font-black text-base uppercase tracking-wider flex items-center justify-center gap-2.5 shadow-[4px_4px_0px_0px_rgba(15,23,42,1)] active:translate-x-0.5 active:translate-y-0.5"
+              className="w-full sm:w-auto px-8 py-4 rounded-xl bg-sky-600 hover:bg-sky-500 text-white font-black text-base uppercase tracking-wider flex items-center justify-center gap-2.5 shadow-[4px_4px_0px_0px_rgba(15,23,42,1)] active:translate-x-0.5 active:translate-y-0.5"
             >
               <Sparkles className="w-5 h-5 text-amber-300" />
               <span>LAUNCH THE FULL SIMULATOR LAB</span>
