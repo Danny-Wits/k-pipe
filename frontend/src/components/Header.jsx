@@ -1,9 +1,9 @@
 import React, { useState } from 'react';
-import { Terminal, Lock, Unlock, Radio, Volume2, VolumeX } from 'lucide-react';
+import { Lock, Unlock, Radio, Volume2, VolumeX, BookOpen, Activity } from 'lucide-react';
 import { sounds } from '../audio/SoundEffects';
 import { SCENARIOS } from '../hooks/useKernelTelemetry';
 
-export default function Header({ telemetry, isConnected, isMockMode }) {
+export default function Header({ telemetry, isConnected, isMockMode, activeChapter, onSelectChapter }) {
   const currentScenario = SCENARIOS[telemetry.scenario] || SCENARIOS.CAT_GREP;
   const isMutexLocked = Boolean(telemetry.mutexLocked);
   const [isMuted, setIsMuted] = useState(true);
@@ -14,12 +14,14 @@ export default function Header({ telemetry, isConnected, isMockMode }) {
     sounds.setMuted(nextState);
   };
 
+  const isFullSim = activeChapter === 4;
+
   return (
     <header className="bg-white rounded-3xl border border-slate-200/90 p-4 sm:p-5 shadow-[0_4px_25px_-4px_rgba(0,0,0,0.05)] mb-5">
       <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-4">
         {/* Left: Branding & Subtitle */}
         <div className="flex items-center gap-3.5">
-          <div className="relative flex items-center justify-center w-12 h-12 rounded-2xl bg-gradient-to-tr from-sky-500 to-indigo-600 text-white shadow-md shadow-sky-500/25">
+          <div className="relative flex items-center justify-center w-12 h-12 rounded-2xl bg-gradient-to-tr from-sky-500 to-indigo-600 text-white shadow-md shadow-sky-500/25 shrink-0">
             <span className="text-2xl">🐧</span>
           </div>
 
@@ -39,6 +41,39 @@ export default function Header({ telemetry, isConnected, isMockMode }) {
               Operating System Pipe &amp; Circular Ring Buffer Concurrency Simulation
             </p>
           </div>
+        </div>
+
+        {/* Center: Mode Switcher (Story vs Live Sim) */}
+        <div className="flex items-center gap-1.5 p-1 bg-slate-100 rounded-2xl border border-slate-200 font-mono text-xs font-bold w-fit">
+          <button
+            onClick={() => {
+              sounds.playClick();
+              onSelectChapter(1);
+            }}
+            className={`flex items-center gap-1.5 px-3 py-1.5 rounded-xl transition-all ${
+              !isFullSim
+                ? 'bg-white text-slate-900 shadow-sm'
+                : 'text-slate-500 hover:text-slate-900'
+            }`}
+          >
+            <BookOpen className="w-3.5 h-3.5 text-sky-600" />
+            <span>Story Walkthrough</span>
+          </button>
+
+          <button
+            onClick={() => {
+              sounds.playClick();
+              onSelectChapter(4);
+            }}
+            className={`flex items-center gap-1.5 px-3 py-1.5 rounded-xl transition-all ${
+              isFullSim
+                ? 'bg-slate-900 text-white shadow-sm'
+                : 'text-slate-500 hover:text-slate-900'
+            }`}
+          >
+            <Activity className="w-3.5 h-3.5 text-emerald-400" />
+            <span>Live Lab ⚡</span>
+          </button>
         </div>
 
         {/* Right: Live Telemetry Badges & Sound Toggle */}
