@@ -774,7 +774,7 @@ export function LinuxBackpressureSim() {
               ) : (
                 <Unlock className="w-3.5 h-3.5 text-neutral-400" />
               )}
-              <span>pipe-&gt;mutex: {mutexLocked ? 'LOCKED' : 'UNLOCKED'}</span>
+              <span>{'pipe->mutex'}: {mutexLocked ? 'LOCKED' : 'UNLOCKED'}</span>
             </div>
             <span className={`text-[10px] ${mutexLocked ? 'text-red-400 font-bold' : 'text-neutral-500'}`}>
               {mutexLocked ? 'CRITICAL SECTION' : 'AVAILABLE'}
