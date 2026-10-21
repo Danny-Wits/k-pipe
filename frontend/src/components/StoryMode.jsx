@@ -1,5 +1,5 @@
 import React from 'react';
-import { ArrowRight, Sparkles, CheckCircle2 } from 'lucide-react';
+import { ArrowRight, Play, CheckCircle2 } from 'lucide-react';
 import { sounds } from '../audio/SoundEffects';
 import confetti from 'canvas-confetti';
 import {
@@ -306,7 +306,7 @@ export default function StoryMode({ currentChapter, onSelectChapter, onLaunchFul
               }}
               className="w-full sm:w-auto px-8 py-5 bg-red-600 hover:bg-red-700 text-white font-display font-black text-base uppercase tracking-wider flex items-center justify-center gap-2.5 border-2 border-black shadow-[6px_6px_0px_0px_#000000] active:translate-x-0.5 active:translate-y-0.5 transition-all"
             >
-              <Sparkles className="w-5 h-5 text-yellow-300" />
+              <Play className="w-5 h-5 fill-white" />
               <span>LAUNCH THE FULL SIMULATOR LAB</span>
               <ArrowRight className="w-5 h-5" />
             </button>

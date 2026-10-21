@@ -5,7 +5,7 @@ import PhysicalPipelineStage from './components/PhysicalPipelineStage';
 import ControlDeck from './components/ControlDeck';
 import BufferSlotMatrix from './components/BufferSlotMatrix';
 import { useKernelTelemetry } from './hooks/useKernelTelemetry';
-import { Cpu, Shield, Sparkles, ArrowLeft } from 'lucide-react';
+import { Cpu, Shield, Terminal, ArrowLeft } from 'lucide-react';
 import { sounds } from './audio/SoundEffects';
 
 export default function App() {
@@ -41,7 +41,7 @@ export default function App() {
             {/* Quick Skip Banner */}
             <div className="p-4 bg-white border-2 border-black flex flex-col sm:flex-row items-center justify-between gap-3 font-mono text-xs shadow-[4px_4px_0px_0px_#000000]">
               <div className="flex items-center gap-2 text-neutral-700">
-                <Sparkles className="w-4 h-4 text-red-600 shrink-0" />
+                <Terminal className="w-4 h-4 text-red-600 shrink-0" />
                 <span>Already know the theory? Skip directly to hands-on experimentation.</span>
               </div>
               <button

@@ -1,5 +1,5 @@
 import React from 'react';
-import { Play, Pause, StepForward, Sliders, Flame, Snowflake, Zap, Sparkles, Check } from 'lucide-react';
+import { Play, Pause, StepForward, Sliders, Flame, Snowflake, Zap, Check } from 'lucide-react';
 import confetti from 'canvas-confetti';
 import { sounds } from '../audio/SoundEffects';
 import { SCENARIOS } from '../hooks/useKernelTelemetry';
@@ -256,7 +256,7 @@ export default function ControlDeck({ telemetry, sendCommand }) {
                 onClick={() => triggerDramaPreset('EQUILIBRIUM')}
                 className="py-2 px-2 bg-white hover:bg-emerald-50 text-emerald-800 border-2 border-black flex items-center justify-center gap-1.5 font-bold transition-all shadow-[2px_2px_0px_0px_#000] active:translate-x-0.5 active:translate-y-0.5 uppercase"
               >
-                <Zap className="w-3.5 h-3.5 text-emerald-600" />
+                <Check className="w-3.5 h-3.5 text-emerald-600 stroke-[3]" />
                 <span>Equilibrium</span>
               </button>
 
@@ -264,7 +264,7 @@ export default function ControlDeck({ telemetry, sendCommand }) {
                 onClick={() => triggerDramaPreset('BURST')}
                 className="py-2 px-2 bg-black text-white hover:bg-neutral-800 border-2 border-black flex items-center justify-center gap-1.5 font-bold transition-all shadow-[2px_2px_0px_0px_#e11d48] active:translate-x-0.5 active:translate-y-0.5 uppercase"
               >
-                <Sparkles className="w-3.5 h-3.5 text-yellow-400" />
+                <Zap className="w-3.5 h-3.5 text-amber-400 fill-amber-400" />
                 <span>Burst Influx</span>
               </button>
             </div>
