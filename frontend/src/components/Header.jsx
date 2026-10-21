@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { Volume2, VolumeX, GitBranch, Lock, Unlock } from 'lucide-react';
 import { sounds } from '../audio/SoundEffects';
 
@@ -9,8 +9,39 @@ export default function Header({
   activeChapter,
   onSelectChapter
 }) {
-  const isMutexLocked = Boolean(telemetry?.mutexLocked);
   const [isMuted, setIsMuted] = useState(true);
+  const [isLockEngaged, setIsLockEngaged] = useState(false);
+  const prevPointersRef = useRef({ head: 0, tail: 0, initialized: false });
+
+  // In the real Linux kernel, the mutex is held for nanoseconds during pointer & memory copy.
+  // We pulse the visual lock indicator for 160ms whenever head/tail updates or lock is signaled,
+  // allowing the human eye to clearly perceive the lock acquiring and releasing in real time.
+  useEffect(() => {
+    if (!telemetry) return;
+    const currentHead = telemetry.headPointer ?? 0;
+    const currentTail = telemetry.tailPointer ?? 0;
+
+    if (!prevPointersRef.current.initialized) {
+      prevPointersRef.current = { head: currentHead, tail: currentTail, initialized: true };
+      return;
+    }
+
+    const hasPointerMoved =
+      currentHead !== prevPointersRef.current.head ||
+      currentTail !== prevPointersRef.current.tail;
+
+    prevPointersRef.current = { head: currentHead, tail: currentTail, initialized: true };
+
+    if (hasPointerMoved || telemetry.mutexLocked) {
+      setIsLockEngaged(true);
+      const timer = setTimeout(() => {
+        setIsLockEngaged(false);
+      }, 180);
+      return () => clearTimeout(timer);
+    }
+  }, [telemetry?.headPointer, telemetry?.tailPointer, telemetry?.mutexLocked]);
+
+  const isMutexLocked = isLockEngaged || Boolean(telemetry?.mutexLocked);
 
   const toggleSound = () => {
     const nextState = !isMuted;
