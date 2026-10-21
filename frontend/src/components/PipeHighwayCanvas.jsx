@@ -2,9 +2,9 @@ import React, { useRef, useEffect } from 'react';
 import { sounds } from '../audio/SoundEffects';
 
 /**
- * 60 FPS HTML5 Canvas physical pipeline simulation:
+ * 60 FPS HTML5 Canvas physical pipeline simulation (Dark Theme):
  * - Dimensional glass tubes with highlights & metal coupling collars
- * - Traveling glowing data capsules with particle trails
+ * - Traveling glowing data capsules with neon particle trails
  * - Physical queue stacking at the gate when backpressure strikes
  * - Starvation drain when empty
  */
@@ -110,7 +110,7 @@ export default function PipeHighwayCanvas({
             speed: (p1End - p1Start) / (writeInterval * 1.8 / 1000), // Speed tied to delay
             size: 11,
             color: '#10b981', // Emerald
-            glowColor: 'rgba(16, 185, 129, 0.4)',
+            glowColor: 'rgba(16, 185, 129, 0.6)',
             id: Math.random()
           });
           sounds.playWhoosh();
@@ -127,8 +127,8 @@ export default function PipeHighwayCanvas({
             targetX: p2End - 10,
             speed: (p2End - p2Start) / (readInterval * 1.8 / 1000),
             size: 11,
-            color: '#6366f1', // Indigo
-            glowColor: 'rgba(99, 102, 241, 0.4)',
+            color: '#818cf8', // Electric Indigo
+            glowColor: 'rgba(129, 140, 248, 0.6)',
             id: Math.random()
           });
           sounds.playWhoosh();
@@ -141,37 +141,41 @@ export default function PipeHighwayCanvas({
 
         // Pipe outer shadow
         ctx.save();
-        ctx.shadowColor = 'rgba(15, 23, 42, 0.08)';
+        ctx.shadowColor = 'rgba(0, 0, 0, 0.6)';
         ctx.shadowBlur = 10;
         ctx.shadowOffsetY = 4;
 
-        // Glass pipe casing
+        // Dark glass pipe casing
         const grad = ctx.createLinearGradient(0, centerY - pipeRadius, 0, centerY + pipeRadius);
-        grad.addColorStop(0, '#f1f5f9');
-        grad.addColorStop(0.3, '#ffffff');
-        grad.addColorStop(0.7, '#e2e8f0');
-        grad.addColorStop(1, '#cbd5e1');
+        grad.addColorStop(0, 'rgba(15, 23, 42, 0.95)');
+        grad.addColorStop(0.3, 'rgba(30, 41, 59, 0.95)');
+        grad.addColorStop(0.7, 'rgba(15, 23, 42, 0.95)');
+        grad.addColorStop(1, 'rgba(7, 11, 20, 0.98)');
 
         ctx.fillStyle = grad;
         ctx.beginPath();
         ctx.roundRect(x1, centerY - pipeRadius, pipeLen, pipeRadius * 2, 8);
         ctx.fill();
+
+        ctx.strokeStyle = 'rgba(56, 189, 248, 0.2)';
+        ctx.lineWidth = 1.5;
+        ctx.stroke();
         ctx.restore();
 
         // Inner chamber (fluid lumen)
         const innerRadius = pipeRadius - 3;
         const innerGrad = ctx.createLinearGradient(0, centerY - innerRadius, 0, centerY + innerRadius);
         if (isBlocked) {
-          innerGrad.addColorStop(0, 'rgba(244, 63, 94, 0.08)');
-          innerGrad.addColorStop(0.5, 'rgba(244, 63, 94, 0.18)');
-          innerGrad.addColorStop(1, 'rgba(244, 63, 94, 0.08)');
+          innerGrad.addColorStop(0, 'rgba(244, 63, 94, 0.15)');
+          innerGrad.addColorStop(0.5, 'rgba(244, 63, 94, 0.35)');
+          innerGrad.addColorStop(1, 'rgba(244, 63, 94, 0.15)');
         } else if (isStarved) {
-          innerGrad.addColorStop(0, 'rgba(241, 245, 249, 0.6)');
-          innerGrad.addColorStop(1, 'rgba(226, 232, 240, 0.6)');
+          innerGrad.addColorStop(0, 'rgba(15, 23, 42, 0.4)');
+          innerGrad.addColorStop(1, 'rgba(30, 41, 59, 0.4)');
         } else {
-          innerGrad.addColorStop(0, 'rgba(240, 249, 255, 0.8)');
-          innerGrad.addColorStop(0.5, 'rgba(224, 242, 254, 0.9)');
-          innerGrad.addColorStop(1, 'rgba(240, 249, 255, 0.8)');
+          innerGrad.addColorStop(0, 'rgba(14, 165, 233, 0.15)');
+          innerGrad.addColorStop(0.5, 'rgba(14, 165, 233, 0.3)');
+          innerGrad.addColorStop(1, 'rgba(14, 165, 233, 0.15)');
         }
 
         ctx.fillStyle = innerGrad;
@@ -181,9 +185,9 @@ export default function PipeHighwayCanvas({
 
         // Glowing center guide laser
         ctx.strokeStyle = isBlocked
-          ? 'rgba(244, 63, 94, 0.35)'
+          ? 'rgba(244, 63, 94, 0.45)'
           : isStarved
-          ? 'rgba(148, 163, 184, 0.25)'
+          ? 'rgba(100, 116, 139, 0.25)'
           : flowColor;
         ctx.lineWidth = 1.5;
         ctx.setLineDash([4, 4]);
@@ -194,8 +198,8 @@ export default function PipeHighwayCanvas({
         ctx.setLineDash([]);
 
         // Specular top highlight (glass reflection shine)
-        ctx.strokeStyle = 'rgba(255, 255, 255, 0.85)';
-        ctx.lineWidth = 2.5;
+        ctx.strokeStyle = 'rgba(255, 255, 255, 0.25)';
+        ctx.lineWidth = 2.0;
         ctx.beginPath();
         ctx.moveTo(x1 + 8, centerY - pipeRadius + 4);
         ctx.lineTo(x2 - 8, centerY - pipeRadius + 4);
@@ -203,12 +207,12 @@ export default function PipeHighwayCanvas({
 
         // Metal coupling rings (joint collars)
         const drawRing = (rx) => {
-          ctx.fillStyle = '#64748b';
+          ctx.fillStyle = '#1e293b';
           ctx.beginPath();
           ctx.roundRect(rx - 3, centerY - pipeRadius - 2, 6, pipeRadius * 2 + 4, 2);
           ctx.fill();
 
-          ctx.fillStyle = '#cbd5e1';
+          ctx.fillStyle = '#334155';
           ctx.fillRect(rx - 1, centerY - pipeRadius - 1, 2, pipeRadius * 2 + 2);
         };
 
@@ -218,23 +222,23 @@ export default function PipeHighwayCanvas({
       };
 
       // Draw Pipe 1 (Ingress)
-      drawGlassPipe(p1Start, p1End, isBufferFull, false, 'rgba(16, 185, 129, 0.4)');
+      drawGlassPipe(p1Start, p1End, isBufferFull, false, 'rgba(16, 185, 129, 0.6)');
 
       // Draw Pipe 2 (Egress)
-      drawGlassPipe(p2Start, p2End, false, isBufferEmpty, 'rgba(99, 102, 241, 0.4)');
+      drawGlassPipe(p2Start, p2End, false, isBufferEmpty, 'rgba(129, 140, 248, 0.6)');
 
       // ─── 4. Gate Mechanism at Reservoir Entrance ───
       // If buffer full, close the security gate!
       if (isBufferFull) {
         ctx.save();
-        ctx.fillStyle = '#e11d48';
-        ctx.shadowColor = 'rgba(225, 29, 72, 0.5)';
-        ctx.shadowBlur = 8;
+        ctx.fillStyle = '#f43f5e';
+        ctx.shadowColor = 'rgba(244, 63, 94, 0.8)';
+        ctx.shadowBlur = 12;
         ctx.fillRect(p1End - 8, centerY - pipeRadius - 3, 6, pipeRadius * 2 + 6);
         ctx.restore();
 
         // Gate Warning Label
-        ctx.fillStyle = '#e11d48';
+        ctx.fillStyle = '#fda4af';
         ctx.font = 'bold 9px "JetBrains Mono", monospace';
         ctx.textAlign = 'center';
         ctx.fillText('LOCKED', p1End - 5, centerY - pipeRadius - 8);
@@ -266,7 +270,7 @@ export default function PipeHighwayCanvas({
             vx: -15,
             vy: (Math.random() - 0.5) * 8,
             life: 1.0,
-            color: 'rgba(16, 185, 129, 0.6)'
+            color: 'rgba(16, 185, 129, 0.8)'
           });
         }
 
@@ -284,7 +288,7 @@ export default function PipeHighwayCanvas({
               vx: Math.random() * 40 + 20,
               vy: (Math.random() - 0.5) * 30,
               life: 0.8,
-              color: 'rgba(14, 165, 233, 0.8)'
+              color: 'rgba(56, 189, 248, 0.9)'
             });
           }
         }
@@ -303,7 +307,7 @@ export default function PipeHighwayCanvas({
             vx: -15,
             vy: (Math.random() - 0.5) * 8,
             life: 1.0,
-            color: 'rgba(99, 102, 241, 0.6)'
+            color: 'rgba(129, 140, 248, 0.8)'
           });
         }
 
@@ -361,19 +365,19 @@ function drawCapsule(ctx, x, y, r, color, glow, isStalled) {
   ctx.save();
 
   // Glow halo
-  ctx.shadowColor = isStalled ? 'rgba(244, 63, 94, 0.7)' : glow;
-  ctx.shadowBlur = isStalled ? 12 : 8;
+  ctx.shadowColor = isStalled ? 'rgba(244, 63, 94, 0.8)' : glow;
+  ctx.shadowBlur = isStalled ? 14 : 10;
 
   // Outer shell
   const grad = ctx.createRadialGradient(x - 3, y - 3, 1, x, y, r);
   if (isStalled) {
     grad.addColorStop(0, '#fecdd3');
     grad.addColorStop(0.5, '#f43f5e');
-    grad.addColorStop(1, '#9f1239');
+    grad.addColorStop(1, '#881337');
   } else {
     grad.addColorStop(0, '#ffffff');
     grad.addColorStop(0.3, color);
-    grad.addColorStop(1, '#0f172a');
+    grad.addColorStop(1, '#070b14');
   }
 
   ctx.fillStyle = grad;
@@ -382,7 +386,7 @@ function drawCapsule(ctx, x, y, r, color, glow, isStalled) {
   ctx.fill();
 
   // Specular gleam (glass reflection)
-  ctx.fillStyle = 'rgba(255, 255, 255, 0.85)';
+  ctx.fillStyle = 'rgba(255, 255, 255, 0.9)';
   ctx.beginPath();
   ctx.ellipse(x - 3, y - 3, r * 0.45, r * 0.25, -Math.PI / 4, 0, Math.PI * 2);
   ctx.fill();

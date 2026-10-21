@@ -21,22 +21,22 @@ export default function PhysicalPipelineStage({
   const isEmpty = pageCount <= 0;
 
   return (
-    <div className="bg-white rounded-3xl border border-slate-200/90 p-5 sm:p-7 shadow-[0_10px_35px_-8px_rgba(0,0,0,0.06)] relative overflow-hidden">
+    <div className="bg-[#0b1021] rounded-3xl border-2 border-slate-800 p-5 sm:p-7 shadow-[0_10px_35px_-8px_rgba(0,0,0,0.6)] relative overflow-hidden">
       {/* Stage Header */}
-      <div className="flex items-center justify-between pb-3.5 mb-4 border-b border-slate-100 font-mono text-xs">
+      <div className="flex items-center justify-between pb-3.5 mb-4 border-b border-slate-800 font-mono text-xs">
         <div className="flex items-center gap-2">
-          <span className="w-2.5 h-2.5 rounded-full bg-sky-500 animate-ping" />
-          <span className="font-extrabold uppercase tracking-wider text-slate-900">
+          <span className="w-2.5 h-2.5 rounded-full bg-sky-400 animate-ping" />
+          <span className="font-extrabold uppercase tracking-wider text-white">
             Physical Linux IPC Pipe Simulation (ring0 ⇋ ring3)
           </span>
         </div>
 
         <div className="hidden sm:flex items-center gap-2 text-slate-400 font-semibold">
-          <span>Process A (fd 1)</span>
-          <ArrowRight className="w-3.5 h-3.5 text-slate-300" />
-          <span className="text-sky-600">Kernel Pipe Buffer</span>
-          <ArrowRight className="w-3.5 h-3.5 text-slate-300" />
-          <span>Process B (fd 0)</span>
+          <span className="text-emerald-400">Process A (fd 1)</span>
+          <ArrowRight className="w-3.5 h-3.5 text-slate-600" />
+          <span className="text-sky-400 font-bold">Kernel Pipe Buffer</span>
+          <ArrowRight className="w-3.5 h-3.5 text-slate-600" />
+          <span className="text-indigo-400">Process B (fd 0)</span>
         </div>
       </div>
 
@@ -87,30 +87,30 @@ export default function PhysicalPipelineStage({
       </div>
 
       {/* OS Explanation Banner (Fixed Height, No Jumping) */}
-      <div className="mt-4 pt-3 border-t border-slate-100 font-mono text-xs">
+      <div className="mt-4 pt-3 border-t border-slate-800 font-mono text-xs">
         <div className={`p-3 rounded-2xl border flex items-center gap-2.5 transition-colors ${
           isFull
-            ? 'bg-rose-50 border-rose-200 text-rose-800'
+            ? 'bg-rose-950/60 border-rose-800 text-rose-300'
             : isEmpty
-            ? 'bg-amber-50 border-amber-200 text-amber-800'
-            : 'bg-emerald-50/60 border-emerald-200 text-emerald-800'
+            ? 'bg-amber-950/60 border-amber-800 text-amber-300'
+            : 'bg-emerald-950/40 border-emerald-800 text-emerald-300'
         }`}>
           {isFull ? (
-            <AlertTriangle className="w-4 h-4 text-rose-600 shrink-0" />
+            <AlertTriangle className="w-4 h-4 text-rose-400 shrink-0 animate-bounce" />
           ) : isEmpty ? (
-            <AlertTriangle className="w-4 h-4 text-amber-600 shrink-0" />
+            <AlertTriangle className="w-4 h-4 text-amber-400 shrink-0" />
           ) : (
-            <ShieldCheck className="w-4 h-4 text-emerald-600 shrink-0" />
+            <ShieldCheck className="w-4 h-4 text-emerald-400 shrink-0" />
           )}
 
           <div className="truncate">
             {isFull ? (
               <span>
-                <strong className="font-extrabold uppercase">Kernel Backpressure Engaged:</strong> Pipe buffer is full ({pageCount}/{capacity} slots). Writer thread suspended in <code className="bg-white/80 px-1 py-0.2 rounded border border-rose-200 font-bold">wr_wait</code> to prevent OOM.
+                <strong className="font-extrabold uppercase">Kernel Backpressure Engaged:</strong> Pipe buffer is full ({pageCount}/{capacity} slots). Writer thread suspended in <code className="bg-slate-900 px-1.5 py-0.2 rounded border border-rose-700 font-bold text-rose-300">wr_wait</code> to prevent OOM.
               </span>
             ) : isEmpty ? (
               <span>
-                <strong className="font-extrabold uppercase">Kernel Starvation Active:</strong> Pipe buffer is empty. Reader thread suspended in <code className="bg-white/80 px-1 py-0.2 rounded border border-amber-200 font-bold">rd_wait</code> until writer emits new pages.
+                <strong className="font-extrabold uppercase">Kernel Starvation Active:</strong> Pipe buffer is empty. Reader thread suspended in <code className="bg-slate-900 px-1.5 py-0.2 rounded border border-amber-700 font-bold text-amber-300">rd_wait</code> until writer emits new pages.
               </span>
             ) : (
               <span>

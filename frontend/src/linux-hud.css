@@ -4,7 +4,7 @@
 
 /* ==========================================================================
    K-PIPE LINUX KERNEL PIPE VISUALIZER STYLESHEET
-   Pristine White Light Mode Theme, Dimensional Glass Tubes, and Keyframes
+   Deep Space Dark Obsidian Theme, Dimensional Glass Tubes, and Keyframes
    ========================================================================== */
 
 :root {
@@ -19,15 +19,15 @@
 }
 
 body {
-  background-color: #f8fafc;
-  color: #0f172a;
+  background-color: #060913;
+  color: #f8fafc;
   font-family: var(--font-sans);
   min-height: 100vh;
   overflow-x: hidden;
   background-image: 
-    radial-gradient(circle at 50% 0%, rgba(14, 165, 233, 0.05) 0%, transparent 50%),
-    linear-gradient(rgba(15, 23, 42, 0.02) 1px, transparent 1px),
-    linear-gradient(90deg, rgba(15, 23, 42, 0.02) 1px, transparent 1px);
+    radial-gradient(circle at 50% 0%, rgba(14, 165, 233, 0.08) 0%, transparent 60%),
+    linear-gradient(rgba(255, 255, 255, 0.02) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255, 255, 255, 0.02) 1px, transparent 1px);
   background-size: 100% 100%, 32px 32px, 32px 32px;
 }
 
@@ -35,24 +35,24 @@ body {
   font-family: var(--font-mono);
 }
 
-/* Glass Card Treatments */
+/* Glass Card Treatments (Dark Theme) */
 .glass-card {
-  background: #ffffff;
-  border: 1px solid rgba(226, 232, 240, 0.9);
+  background: #0b1021;
+  border: 1px solid rgba(51, 65, 85, 0.7);
   border-radius: 1.5rem;
-  box-shadow: 0 10px 30px -5px rgba(0, 0, 0, 0.04), 0 1px 3px rgba(0, 0, 0, 0.02);
+  box-shadow: 0 10px 30px -5px rgba(0, 0, 0, 0.5), 0 1px 3px rgba(0, 0, 0, 0.3);
   transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
 .glass-card:hover {
-  border-color: rgba(203, 213, 225, 1);
-  box-shadow: 0 14px 35px -5px rgba(0, 0, 0, 0.06);
+  border-color: rgba(56, 189, 248, 0.4);
+  box-shadow: 0 14px 35px -5px rgba(2, 132, 199, 0.15);
 }
 
-/* Custom Sliders */
+/* Custom Sliders for Dark Mode */
 input[type="range"] {
   appearance: none;
-  background: #e2e8f0;
+  background: #1e293b;
   height: 8px;
   border-radius: 4px;
   outline: none;
@@ -64,12 +64,15 @@ input[type="range"]::-webkit-slider-thumb {
   height: 18px;
   border-radius: 50%;
   cursor: pointer;
-  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.15);
-  transition: transform 0.1s ease;
+  background: #38bdf8;
+  border: 2px solid #0f172a;
+  box-shadow: 0 0 10px rgba(56, 189, 248, 0.5);
+  transition: transform 0.1s ease, box-shadow 0.1s ease;
 }
 
 input[type="range"]::-webkit-slider-thumb:hover {
   transform: scale(1.2);
+  box-shadow: 0 0 16px rgba(56, 189, 248, 0.8);
 }
 
 /* Scrollbar Customization */
@@ -78,12 +81,12 @@ input[type="range"]::-webkit-slider-thumb:hover {
   height: 6px;
 }
 ::-webkit-scrollbar-track {
-  background: #f1f5f9;
+  background: #070b14;
 }
 ::-webkit-scrollbar-thumb {
-  background: #cbd5e1;
+  background: #1e293b;
   border-radius: 3px;
 }
 ::-webkit-scrollbar-thumb:hover {
-  background: #94a3b8;
+  background: #334155;
 }
