@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Database, Info } from 'lucide-react';
+import { Database, Info, ArrowDown, ArrowUp, X } from 'lucide-react';
 import { sounds } from '../audio/SoundEffects';
 
 export default function BufferSlotMatrix({
@@ -105,17 +105,19 @@ export default function BufferSlotMatrix({
               {/* Bottom Row: Head / Tail Indicator */}
               <div className="flex items-center justify-between pt-1 border-t border-neutral-200 text-xs font-bold">
                 {slot.isHead && (
-                  <span className="bg-emerald-600 text-white px-1 text-[10px] uppercase">
-                    ▼head
+                  <span className="bg-emerald-600 text-white px-1 text-[10px] uppercase flex items-center gap-0.5">
+                    <ArrowDown className="w-2.5 h-2.5" />
+                    <span>HEAD</span>
                   </span>
                 )}
                 {slot.isTail && (
-                  <span className="bg-black text-white px-1 text-[10px] uppercase ml-auto">
-                    ▲tail
+                  <span className="bg-black text-white px-1 text-[10px] uppercase flex items-center gap-0.5 ml-auto">
+                    <ArrowUp className="w-2.5 h-2.5" />
+                    <span>TAIL</span>
                   </span>
                 )}
                 {!slot.isHead && !slot.isTail && (
-                  <span className="text-neutral-400 text-[10px] uppercase">idle</span>
+                  <span className="text-neutral-400 text-[10px] uppercase">IDLE</span>
                 )}
               </div>
             </div>
@@ -133,9 +135,10 @@ export default function BufferSlotMatrix({
             </span>
             <button
               onClick={() => setSelectedSlot(null)}
-              className="text-black bg-white hover:bg-neutral-100 px-3 py-1 border-2 border-black text-xs font-bold uppercase shadow-[2px_2px_0px_0px_#000]"
+              className="text-black bg-white hover:bg-neutral-100 px-3 py-1 border-2 border-black text-xs font-bold uppercase shadow-[2px_2px_0px_0px_#000] flex items-center gap-1"
             >
-              Close ✕
+              <span>CLOSE</span>
+              <X className="w-3.5 h-3.5" />
             </button>
           </div>
 

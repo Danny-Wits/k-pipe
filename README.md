@@ -1,4 +1,4 @@
-# 🐧 K-PIPE: Linux Kernel Pipe & Ring Buffer Visualizer
+# K-PIPE: Linux Kernel Pipe & Ring Buffer Visualizer
 > **An Interactive Systems Observability & Concurrency Dashboard Visualizing the Linux Kernel Pipe Implementation (`fs/pipe.c`)**
 
 [![Java](https://img.shields.io/badge/Java-21%2B-ED8B00?style=for-the-badge&logo=openjdk&logoColor=white)](https://openjdk.org/)
@@ -10,7 +10,7 @@
 
 ---
 
-## 📖 Overview
+## Overview
 
 **K-PIPE** is an interactive, full-stack educational visualization of the **Producer-Consumer Problem** as implemented natively within the **Linux Operating System kernel**.
 
@@ -20,7 +20,7 @@ K-PIPE brings these low-level operating system mechanics to life. A high-perform
 
 ---
 
-## 🏗️ Architectural Topology
+## Architectural Topology
 
 The system strictly mirrors the boundary between **Linux User Space** and **Linux Kernel Space**:
 
@@ -59,7 +59,7 @@ The system strictly mirrors the boundary between **Linux User Space** and **Linu
 
 ---
 
-## 🔬 Linux Kernel Mechanics Implemented
+## Linux Kernel Mechanics Implemented
 
 | Kernel Mechanism | Source File / Primitives | K-PIPE Implementation & Visualization |
 | :--- | :--- | :--- |
@@ -73,15 +73,15 @@ The system strictly mirrors the boundary between **Linux User Space** and **Linu
 
 ---
 
-## ✨ Features
+## Features
 
 - **Real Java Concurrency Engine**: Built without heavy framework overhead using **Java 21+** and **Javalin**. Starts in **~80ms**, utilizing true platform threads and native `synchronized`, `wait()`, and `notifyAll()` monitors to replicate kernel wait queues.
 - **Live Kernel Observability HUD**: Dark-mode terminal design inspired by modern eBPF and Linux monitoring tools (`htop`, `bpftrace`, Grafana).
 - **Animated Data Conduits (Pipes)**: Watch 4KB memory pages with hexadecimal memory addresses and data previews physically glide across user-space boundaries into kernel memory slots.
 - **Circular Memory Slot Rack**: Visualizes active `head` (write) and `tail` (read) pointers wrapping continuously around memory pages.
 - **Process State Indicators**: Real-time Linux scheduler states for both producer and consumer:
-  - 🟢 **`TASK_RUNNING`**: Active CPU execution and I/O dispatch.
-  - 🟡 **`TASK_INTERRUPTIBLE`**: Blocked and sleeping on the kernel wait queue (`wr_wait` or `rd_wait`).
+  - **`TASK_RUNNING`**: Active CPU execution and I/O dispatch.
+  - **`TASK_INTERRUPTIBLE`**: Blocked and sleeping on the kernel wait queue (`wr_wait` or `rd_wait`).
 - **Interactive Syscall Controls**:
   - Independent I/O throttle sliders for Process A (`write` rate) and Process B (`read` rate).
   - Pipe capacity selector (`fcntl F_SETPIPE_SZ`: 4, 8, 16, or 32 pages).
@@ -93,7 +93,7 @@ The system strictly mirrors the boundary between **Linux User Space** and **Linu
 
 ---
 
-## 📁 Repository Structure
+## Repository Structure
 
 ```
 producerConsumer/
@@ -132,7 +132,7 @@ producerConsumer/
 
 ---
 
-## 🚀 Quickstart Guide
+## Quickstart Guide
 
 ### Prerequisites
 - **Java**: OpenJDK 21 or higher
@@ -158,7 +158,7 @@ Open your browser and navigate to **`http://localhost:5173`**.
 
 ---
 
-## 📡 WebSocket Telemetry Protocol
+## WebSocket Telemetry Protocol
 
 ### Client ➔ Server Command (`/ws/telemetry`)
 Sent from the browser when modifying syscall speeds, capacity, or presets:
@@ -211,7 +211,7 @@ Streamed by the Java engine at 25 FPS to synchronize visual state:
 
 ---
 
-## 🎓 Core Operating System Insights
+## Core Operating System Insights
 
 By interacting with K-PIPE, users gain hands-on intuition for foundational OS principles:
 1. **Why `while` is mandatory over `if` in condition waits**: Protects against spurious wakeups and thundering-herd race conditions in multithreaded schedulers.
@@ -221,5 +221,5 @@ By interacting with K-PIPE, users gain hands-on intuition for foundational OS pr
 
 ---
 
-## 📄 License
+## License
 This project is licensed under the MIT License — see the [LICENSE](LICENSE) file for details.

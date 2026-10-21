@@ -599,7 +599,7 @@ export function NaiveBufferOverflowSim() {
                 >
                   <div className="text-xs font-bold text-neutral-500">SLOT #{slot.id}</div>
                   <div className="font-mono font-bold text-xs mt-1 truncate">
-                    {slot.overwritten ? '💥 ' + slot.text : slot.text}
+                    {slot.overwritten ? '[CLOBBERED] ' + slot.text : slot.text}
                   </div>
                   <div className="text-xs mt-1 font-bold">
                     {slot.overwritten ? (
@@ -757,15 +757,11 @@ export function LinuxBackpressureSim() {
               {Array.from({ length: capacity }).map((_, idx) => (
                 <div
                   key={idx}
-                  className={`h-5 border-2 border-black text-xs flex items-center justify-center font-bold ${
-                    idx < slotCount
-                      ? 'bg-red-600 text-white'
-                      : 'bg-white text-neutral-300'
+                  className={`h-5 border-2 border-black transition-colors ${
+                    idx < slotCount ? 'bg-red-600' : 'bg-neutral-100'
                   }`}
                   title={`Slot #${idx}`}
-                >
-                  {idx < slotCount ? '■' : '·'}
-                </div>
+                />
               ))}
             </div>
             <div className="flex items-center justify-between text-xs font-bold text-black mt-2">
