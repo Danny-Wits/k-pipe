@@ -1,5 +1,5 @@
 import React from 'react';
-import { ArrowRight, Play, CheckCircle2 } from 'lucide-react';
+import { ArrowRight, Play, CheckCircle2, Lock, Database, ShieldCheck } from 'lucide-react';
 import { sounds } from '../audio/SoundEffects';
 import confetti from 'canvas-confetti';
 import {
@@ -208,8 +208,55 @@ export default function StoryMode({ currentChapter, onSelectChapter, onLaunchFul
               <span className="bg-black text-white px-2 py-0.5 mt-2 inline-block">PUT FAST THREADS TO SLEEP.</span>
             </h2>
             <p className="mt-5 text-base sm:text-xl text-neutral-800 font-medium max-w-3xl leading-relaxed">
-              In Linux kernel source (<code className="text-red-600 font-bold font-mono">fs/pipe.c</code>), every pipe gets a bounded 16-page circular ring buffer (64KB). Synchronization is governed by two elegant rules:
+              In Linux kernel source (<code className="text-red-600 font-bold font-mono">fs/pipe.c</code>), every pipe gets a bounded 16-page circular ring buffer (64KB). Synchronization is governed by three architectural pillars:
             </p>
+          </div>
+
+          {/* Architectural Blueprint Diagram: struct pipe_inode_info */}
+          <div className="p-6 border-2 border-black bg-neutral-50 shadow-[4px_4px_0px_0px_#000000] font-mono">
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between pb-3 mb-4 border-b-2 border-black gap-2">
+              <span className="font-bold uppercase text-xs text-black tracking-wider">
+                KERNEL ARCHITECTURAL BLUEPRINT (fs/pipe.c)
+              </span>
+              <span className="text-xs text-red-600 font-bold uppercase">
+                struct pipe_inode_info
+              </span>
+            </div>
+
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
+              <div className="p-4 bg-white border-2 border-black shadow-[2px_2px_0px_0px_#000]">
+                <div className="text-xs font-bold text-red-600 uppercase flex items-center gap-1">
+                  <Lock className="w-3.5 h-3.5" />
+                  <span>1. pipe-&gt;mutex</span>
+                </div>
+                <div className="font-display font-black text-base text-black mt-1">MUTUAL EXCLUSION</div>
+                <p className="text-xs text-neutral-600 mt-2 leading-relaxed">
+                  Locked only for microseconds while copying memory. <strong>Released before sleeping</strong> so the reader can access the pipe without deadlock.
+                </p>
+              </div>
+
+              <div className="p-4 bg-white border-2 border-black shadow-[2px_2px_0px_0px_#000]">
+                <div className="text-xs font-bold text-black uppercase flex items-center gap-1">
+                  <Database className="w-3.5 h-3.5" />
+                  <span>2. pipe-&gt;bufs[16]</span>
+                </div>
+                <div className="font-display font-black text-base text-black mt-1">BOUNDED RING</div>
+                <p className="text-xs text-neutral-600 mt-2 leading-relaxed">
+                  Fixed 64KB array of 4KB pages indexed circularly with <code>head % 16</code> and <code>tail % 16</code>. Zero memory reallocation.
+                </p>
+              </div>
+
+              <div className="p-4 bg-white border-2 border-black shadow-[2px_2px_0px_0px_#000]">
+                <div className="text-xs font-bold text-emerald-700 uppercase flex items-center gap-1">
+                  <ShieldCheck className="w-3.5 h-3.5" />
+                  <span>3. wr_wait & rd_wait</span>
+                </div>
+                <div className="font-display font-black text-base text-black mt-1">WAIT QUEUES</div>
+                <p className="text-xs text-neutral-600 mt-2 leading-relaxed">
+                  Blocked threads sleep in <code>TASK_INTERRUPTIBLE</code> at 0% CPU. Awakened by <code>wake_up_interruptible()</code>.
+                </p>
+              </div>
+            </div>
           </div>
 
           {/* ─── LIVE VISUAL SIMULATOR: LINUX BACKPRESSURE + WAIT QUEUES ─── */}

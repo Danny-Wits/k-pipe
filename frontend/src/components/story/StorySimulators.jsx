@@ -646,6 +646,7 @@ export function LinuxBackpressureSim() {
   const [slotCount, setSlotCount] = useState(15);
   const [writerState, setWriterState] = useState('TASK_RUNNING');
   const [gateLocked, setGateLocked] = useState(false);
+  const [mutexLocked, setMutexLocked] = useState(false);
   const [lastAction, setLastAction] = useState('Initialized with 15/16 slots filled.');
 
   const capacity = 16;
@@ -653,36 +654,46 @@ export function LinuxBackpressureSim() {
   const handleWriterPush = () => {
     sounds.playClick();
     if (slotCount < capacity) {
+      setMutexLocked(true);
       const next = slotCount + 1;
       setSlotCount(next);
 
       if (next >= capacity) {
         setGateLocked(true);
         setWriterState('SLEEPING (wr_wait)');
-        setLastAction('Buffer 16/16 full. Process A put to sleep on pipe->wr_wait.');
+        setLastAction('Buffer 16/16 full. Process A put to sleep on pipe->wr_wait. pipe->mutex UNLOCKED to prevent deadlock.');
         sounds.playAlert();
       } else {
-        setLastAction(`Wrote 1 page. Buffer now ${next}/${capacity}.`);
+        setLastAction(`pipe->mutex acquired. Wrote 1 page to slot #${next - 1}. Buffer now ${next}/${capacity}.`);
       }
+
+      setTimeout(() => {
+        setMutexLocked(false);
+      }, 400);
     }
   };
 
   const handleReaderConsume = () => {
     sounds.playClick();
     if (slotCount > 0) {
+      setMutexLocked(true);
       const next = slotCount - 1;
       setSlotCount(next);
 
       if (writerState.includes('SLEEPING') || gateLocked) {
         sounds.playChime();
-        setLastAction('Reader freed 1 slot. Kernel fired wake_up_interruptible() to awaken Process A.');
+        setLastAction('pipe->mutex acquired. Reader freed 1 slot. Kernel fired wake_up_interruptible() to awaken Process A.');
 
         setTimeout(() => {
           setGateLocked(false);
           setWriterState('TASK_RUNNING');
-        }, 300);
+          setMutexLocked(false);
+        }, 400);
       } else {
-        setLastAction(`Read 1 page. Buffer now ${next}/${capacity}.`);
+        setLastAction(`pipe->mutex acquired. Read 1 page. Buffer now ${next}/${capacity}.`);
+        setTimeout(() => {
+          setMutexLocked(false);
+        }, 400);
       }
     }
   };
@@ -741,18 +752,37 @@ export function LinuxBackpressureSim() {
         </div>
 
         {/* Central 16-Slot Reservoir & Backpressure Gate */}
-        <div className="p-5 border-2 border-black bg-neutral-50 flex flex-col items-center justify-between min-h-[170px] shadow-[4px_4px_0px_0px_#000]">
+        <div className="p-5 border-2 border-black bg-neutral-50 flex flex-col items-center justify-between min-h-[220px] shadow-[4px_4px_0px_0px_#000]">
           {/* Mechanical Stopgate Indicator */}
-          <div className={`w-full py-2 text-center text-xs font-bold uppercase tracking-wider border-2 border-black ${
+          <div className={`w-full py-2 text-center text-xs font-bold uppercase tracking-wider border-2 border-black transition-colors ${
             gateLocked
               ? 'bg-red-600 text-white shadow-[2px_2px_0px_0px_#000]'
               : 'bg-white text-black'
           }`}>
-            {gateLocked ? 'GATE LOCKED (BUFFER FULL)' : 'GATE OPEN (FLOW READY)'}
+            {gateLocked ? 'BACKPRESSURE GATE: LOCKED (16/16 FULL)' : 'BACKPRESSURE GATE: OPEN (FLOW READY)'}
+          </div>
+
+          {/* Linux pipe->mutex status card */}
+          <div className={`w-full py-1.5 px-3 border-2 border-black flex items-center justify-between text-xs font-bold uppercase transition-all duration-150 my-2 ${
+            mutexLocked
+              ? 'bg-black text-white shadow-[2px_2px_0px_0px_#e11d48]'
+              : 'bg-white text-black'
+          }`}>
+            <div className="flex items-center gap-1.5">
+              {mutexLocked ? (
+                <Lock className="w-3.5 h-3.5 text-red-500" />
+              ) : (
+                <Unlock className="w-3.5 h-3.5 text-neutral-400" />
+              )}
+              <span>pipe-&gt;mutex: {mutexLocked ? 'LOCKED' : 'UNLOCKED'}</span>
+            </div>
+            <span className={`text-[10px] ${mutexLocked ? 'text-red-400 font-bold' : 'text-neutral-500'}`}>
+              {mutexLocked ? 'CRITICAL SECTION' : 'AVAILABLE'}
+            </span>
           </div>
 
           {/* 16 Memory Slot Matrix */}
-          <div className="w-full my-3">
+          <div className="w-full my-1">
             <div className="grid grid-cols-8 gap-1.5 w-full">
               {Array.from({ length: capacity }).map((_, idx) => (
                 <div
@@ -772,7 +802,7 @@ export function LinuxBackpressureSim() {
             </div>
           </div>
 
-          <div className="text-xs text-neutral-600 text-center font-bold">
+          <div className="text-xs text-neutral-600 text-center font-bold mt-1">
             Circular FIFO: <code className="text-black">head % 16</code> and <code className="text-black">tail % 16</code>
           </div>
         </div>

@@ -1,5 +1,5 @@
-import React, { useState, useEffect, useRef } from 'react';
-import { Volume2, VolumeX, GitBranch, Lock, Unlock } from 'lucide-react';
+import React, { useState } from 'react';
+import { Volume2, VolumeX, GitBranch } from 'lucide-react';
 import { sounds } from '../audio/SoundEffects';
 
 export default function Header({
@@ -10,38 +10,6 @@ export default function Header({
   onSelectChapter
 }) {
   const [isMuted, setIsMuted] = useState(true);
-  const [isLockEngaged, setIsLockEngaged] = useState(false);
-  const prevPointersRef = useRef({ head: 0, tail: 0, initialized: false });
-
-  // In the real Linux kernel, the mutex is held for nanoseconds during pointer & memory copy.
-  // We pulse the visual lock indicator for 160ms whenever head/tail updates or lock is signaled,
-  // allowing the human eye to clearly perceive the lock acquiring and releasing in real time.
-  useEffect(() => {
-    if (!telemetry) return;
-    const currentHead = telemetry.headPointer ?? 0;
-    const currentTail = telemetry.tailPointer ?? 0;
-
-    if (!prevPointersRef.current.initialized) {
-      prevPointersRef.current = { head: currentHead, tail: currentTail, initialized: true };
-      return;
-    }
-
-    const hasPointerMoved =
-      currentHead !== prevPointersRef.current.head ||
-      currentTail !== prevPointersRef.current.tail;
-
-    prevPointersRef.current = { head: currentHead, tail: currentTail, initialized: true };
-
-    if (hasPointerMoved || telemetry.mutexLocked) {
-      setIsLockEngaged(true);
-      const timer = setTimeout(() => {
-        setIsLockEngaged(false);
-      }, 180);
-      return () => clearTimeout(timer);
-    }
-  }, [telemetry?.headPointer, telemetry?.tailPointer, telemetry?.mutexLocked]);
-
-  const isMutexLocked = isLockEngaged || Boolean(telemetry?.mutexLocked);
 
   const toggleSound = () => {
     const nextState = !isMuted;
@@ -54,7 +22,7 @@ export default function Header({
   return (
     <header className="bg-white border-2 border-black p-4 sm:p-5 shadow-[4px_4px_0px_0px_#000000] mb-6">
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-        {/* Left: Bold Identity (No useless small badges) */}
+        {/* Left: Bold Monogram Identity */}
         <div className="flex items-center gap-3">
           <div className="w-10 h-10 bg-black text-white flex items-center justify-center font-display font-black text-xl border-2 border-black shadow-[2px_2px_0px_0px_#e11d48] shrink-0">
             K
@@ -69,7 +37,7 @@ export default function Header({
           </div>
         </div>
 
-        {/* Center: Tactile Mode Switcher (No // and no blinking dots) */}
+        {/* Center: Tactile Mode Switcher */}
         <div className="flex items-center border-2 border-black p-1 bg-neutral-100 shadow-[2px_2px_0px_0px_#000000] self-start sm:self-center">
           <button
             onClick={() => {
@@ -100,34 +68,8 @@ export default function Header({
           </button>
         </div>
 
-        {/* Right: Essential State Controls */}
+        {/* Right: Audio & Source Controls */}
         <div className="flex items-center gap-2.5 font-mono text-xs">
-          {/* Mutex State Indicator */}
-          <div
-            title={
-              isMutexLocked
-                ? 'pipe->mutex is LOCKED: A process is actively writing/reading the circular ring buffer in critical section.'
-                : 'pipe->mutex is UNLOCKED: Circular buffer is free; ready for the next write() or read() syscall.'
-            }
-            className={`flex items-center gap-1.5 px-3 py-1.5 font-bold uppercase border-2 border-black shadow-[2px_2px_0px_0px_#000000] cursor-help transition-colors ${
-              isMutexLocked
-                ? 'bg-red-600 text-white'
-                : 'bg-white text-black'
-            }`}
-          >
-            {isMutexLocked ? (
-              <>
-                <Lock className="w-3 h-3 text-white" />
-                <span>MUTEX: LOCKED</span>
-              </>
-            ) : (
-              <>
-                <Unlock className="w-3 h-3 text-black" />
-                <span>MUTEX: UNLOCKED</span>
-              </>
-            )}
-          </div>
-
           {/* Sound Toggle */}
           <button
             onClick={toggleSound}
