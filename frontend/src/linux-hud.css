@@ -1,0 +1,258 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* ==========================================================================
+   K-PIPE LINUX KERNEL OBSERVABILITY HUD STYLESHEET
+   Root variables, eBPF terminal styling, conduits, and animations
+   ========================================================================== */
+
+:root {
+  --bg-deep: #07090e;
+  --bg-panel: #0d111a;
+  --bg-panel-elevated: #131926;
+  --bg-card: #182030;
+  --border-subtle: #222c42;
+  --border-accent: #2c3a57;
+  
+  --accent-cyan: #00E5FF;
+  --accent-green: #00E676;
+  --accent-amber: #FFB300;
+  --accent-crimson: #FF1744;
+  --accent-purple: #B388FF;
+
+  --text-primary: #ECEFF4;
+  --text-muted: #8892B0;
+  --text-dim: #4C566A;
+
+  --font-mono: 'JetBrains Mono', 'Fira Code', ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+  --font-sans: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+}
+
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  background-color: var(--bg-deep);
+  color: var(--text-primary);
+  font-family: var(--font-sans);
+  min-height: 100vh;
+  overflow-x: hidden;
+  background-image: 
+    radial-gradient(circle at 50% 0%, rgba(0, 229, 255, 0.05) 0%, transparent 60%),
+    linear-gradient(rgba(255, 255, 255, 0.02) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255, 255, 255, 0.02) 1px, transparent 1px);
+  background-size: 100% 100%, 32px 32px, 32px 32px;
+}
+
+/* Typography Helpers */
+.font-mono {
+  font-family: var(--font-mono);
+}
+
+/* Scanline Overlay (Low opacity CRT feel) */
+.scanlines {
+  position: relative;
+}
+.scanlines::after {
+  content: " ";
+  display: block;
+  position: absolute;
+  top: 0; left: 0; bottom: 0; right: 0;
+  background: linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.25) 50%);
+  background-size: 100% 4px;
+  z-index: 40;
+  pointer-events: none;
+  opacity: 0.4;
+}
+
+/* Glass & Panel Treatments */
+.hud-card {
+  background: var(--bg-panel);
+  border: 1px solid var(--border-subtle);
+  border-radius: 8px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.5);
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+.hud-card:hover {
+  border-color: var(--border-accent);
+}
+
+.hud-card-elevated {
+  background: var(--bg-panel-elevated);
+  border: 1px solid var(--border-subtle);
+  border-radius: 8px;
+}
+
+/* Kernel Boundary Dividers */
+.kernel-boundary-badge {
+  background: linear-gradient(90deg, rgba(0, 229, 255, 0.1), rgba(0, 230, 118, 0.1));
+  border: 1px dashed var(--accent-cyan);
+  color: var(--accent-cyan);
+  text-transform: uppercase;
+  font-size: 0.72rem;
+  letter-spacing: 0.1em;
+  padding: 4px 10px;
+  border-radius: 4px;
+}
+
+/* Status Badges */
+.badge-running {
+  background: rgba(0, 230, 118, 0.12);
+  border: 1px solid var(--accent-green);
+  color: var(--accent-green);
+  box-shadow: 0 0 10px rgba(0, 230, 118, 0.2);
+}
+
+.badge-interruptible {
+  background: rgba(255, 179, 0, 0.12);
+  border: 1px solid var(--accent-amber);
+  color: var(--accent-amber);
+  box-shadow: 0 0 10px rgba(255, 179, 0, 0.2);
+}
+
+.badge-locked {
+  background: rgba(255, 23, 68, 0.12);
+  border: 1px solid var(--accent-crimson);
+  color: var(--accent-crimson);
+  box-shadow: 0 0 10px rgba(255, 23, 68, 0.2);
+}
+
+/* Pulsing LED dots */
+.led-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  display: inline-block;
+}
+
+.led-green {
+  background-color: var(--accent-green);
+  box-shadow: 0 0 8px var(--accent-green);
+}
+
+.led-amber {
+  background-color: var(--accent-amber);
+  box-shadow: 0 0 8px var(--accent-amber);
+}
+
+.led-crimson {
+  background-color: var(--accent-crimson);
+  box-shadow: 0 0 8px var(--accent-crimson);
+}
+
+.led-cyan {
+  background-color: var(--accent-cyan);
+  box-shadow: 0 0 8px var(--accent-cyan);
+}
+
+.pulse-fast {
+  animation: pulse-kf 1s infinite alternate;
+}
+
+.pulse-slow {
+  animation: pulse-kf 2.5s infinite alternate;
+}
+
+@keyframes pulse-kf {
+  0% { opacity: 0.4; transform: scale(0.92); }
+  100% { opacity: 1; transform: scale(1.08); }
+}
+
+/* Conduit Glow Animations */
+@keyframes conduitFlowRight {
+  0% { stroke-dashoffset: 60; }
+  100% { stroke-dashoffset: 0; }
+}
+
+.flow-anim-fast {
+  animation: conduitFlowRight 0.8s linear infinite;
+}
+
+.flow-anim-normal {
+  animation: conduitFlowRight 1.5s linear infinite;
+}
+
+.flow-anim-slow {
+  animation: conduitFlowRight 3s linear infinite;
+}
+
+/* Scrollbar Customization */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+::-webkit-scrollbar-track {
+  background: var(--bg-deep);
+}
+::-webkit-scrollbar-thumb {
+  background: var(--border-accent);
+  border-radius: 3px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: var(--text-dim);
+}
+
+/* Custom Sliders */
+input[type="range"].hud-slider {
+  appearance: none;
+  background: #171d2d;
+  height: 6px;
+  border-radius: 3px;
+  outline: none;
+  border: 1px solid var(--border-subtle);
+}
+
+input[type="range"].hud-slider::-webkit-slider-thumb {
+  appearance: none;
+  width: 16px;
+  height: 16px;
+  border-radius: 50%;
+  background: var(--accent-cyan);
+  cursor: pointer;
+  box-shadow: 0 0 8px var(--accent-cyan);
+  transition: transform 0.1s ease;
+}
+
+input[type="range"].hud-slider::-webkit-slider-thumb:hover {
+  transform: scale(1.25);
+}
+
+input[type="range"].hud-slider-amber::-webkit-slider-thumb {
+  background: var(--accent-amber);
+  box-shadow: 0 0 8px var(--accent-amber);
+}
+
+/* Memory Slot Styling */
+.memory-slot {
+  background: #0f1523;
+  border: 1px solid var(--border-subtle);
+  border-radius: 6px;
+  transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+  position: relative;
+}
+
+.memory-slot.occupied {
+  background: linear-gradient(135deg, rgba(0, 229, 255, 0.08) 0%, rgba(20, 32, 52, 0.9) 100%);
+  border-color: rgba(0, 229, 255, 0.5);
+  box-shadow: inset 0 0 12px rgba(0, 229, 255, 0.12), 0 2px 8px rgba(0, 0, 0, 0.4);
+}
+
+.memory-slot.head-active {
+  border-color: var(--accent-green) !important;
+  box-shadow: 0 0 12px rgba(0, 230, 118, 0.3) !important;
+}
+
+.memory-slot.tail-active {
+  border-color: var(--accent-cyan) !important;
+  box-shadow: 0 0 12px rgba(0, 229, 255, 0.3) !important;
+}
+
+.memory-slot.head-tail-overlap {
+  border-color: var(--accent-amber) !important;
+  box-shadow: 0 0 15px rgba(255, 179, 0, 0.4) !important;
+}
