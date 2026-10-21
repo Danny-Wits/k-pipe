@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import Header from './components/Header';
 import UserSpaceProcesses from './components/UserSpaceProcesses';
 import KernelPipeConduit from './components/KernelPipeConduit';
@@ -7,14 +7,32 @@ import WaitQueueInspector from './components/WaitQueueInspector';
 import LinuxControlConsole from './components/LinuxControlConsole';
 import KernelDmesgLog from './components/KernelDmesgLog';
 import { useKernelTelemetry } from './hooks/useKernelTelemetry';
-import { BookOpen, ExternalLink, Terminal, Shield, Cpu } from 'lucide-react';
+import { Cpu, Shield } from 'lucide-react';
 
 export default function App() {
   const { telemetry, isConnected, isMockMode, sendCommand } = useKernelTelemetry();
   const [showLogs, setShowLogs] = useState(true);
 
+  // Default to lightmode as requested, persist in localStorage
+  const [theme, setTheme] = useState(() => {
+    return localStorage.getItem('kpipe-theme') || 'light';
+  });
+
+  useEffect(() => {
+    localStorage.setItem('kpipe-theme', theme);
+    if (theme === 'dark') {
+      document.documentElement.classList.add('dark');
+    } else {
+      document.documentElement.classList.remove('dark');
+    }
+  }, [theme]);
+
+  const toggleTheme = () => {
+    setTheme(prev => (prev === 'light' ? 'dark' : 'light'));
+  };
+
   return (
-    <div className="min-h-screen bg-[#07090e] text-slate-200 scanlines flex flex-col justify-between">
+    <div className={`${theme} min-h-screen bg-slate-50 dark:bg-[#07090e] text-slate-800 dark:text-slate-200 bg-light-grid dark:bg-dark-grid dark:scanlines flex flex-col justify-between transition-colors duration-200`}>
       {/* Top Banner / HUD Header */}
       <div className="max-w-[1600px] w-full mx-auto p-3 sm:p-5 flex-1">
         <Header
@@ -23,6 +41,8 @@ export default function App() {
           isMockMode={isMockMode}
           showLogs={showLogs}
           onToggleLogs={() => setShowLogs(prev => !prev)}
+          theme={theme}
+          onToggleTheme={toggleTheme}
         />
 
         {/* Master Observability Stack */}
@@ -95,24 +115,24 @@ export default function App() {
       </div>
 
       {/* Linux Kernel Footer Notes */}
-      <footer className="mt-8 border-t border-slate-900 bg-[#06080d] py-4 px-4 text-center font-mono text-xs text-slate-400">
+      <footer className="mt-8 border-t border-slate-200 dark:border-slate-900 bg-white dark:bg-[#06080d] py-4 px-4 text-center font-mono text-xs text-slate-500 dark:text-slate-400">
         <div className="max-w-[1600px] mx-auto flex flex-col sm:flex-row items-center justify-between gap-3">
           <div className="flex items-center gap-2">
-            <span className="text-cyan-400 font-bold">K-PIPE</span>
+            <span className="text-sky-600 dark:text-cyan-400 font-bold">K-PIPE</span>
             <span>•</span>
             <span>Linux Kernel IPC &amp; Producer-Consumer Concurrency Visualizer</span>
           </div>
-          <div className="flex flex-wrap items-center justify-center gap-4 text-[11px] text-slate-400">
+          <div className="flex flex-wrap items-center justify-center gap-4 text-[11px] text-slate-500 dark:text-slate-400">
             <span className="flex items-center gap-1">
-              <Cpu className="w-3.5 h-3.5 text-cyan-400" /> PAGE_SIZE: 4096 B
+              <Cpu className="w-3.5 h-3.5 text-sky-600 dark:text-cyan-400" /> PAGE_SIZE: 4096 B
             </span>
             <span>•</span>
             <span className="flex items-center gap-1">
-              <Shield className="w-3.5 h-3.5 text-emerald-400" /> PIPE_DEF_BUFFERS: 16
+              <Shield className="w-3.5 h-3.5 text-emerald-600 dark:text-emerald-400" /> PIPE_DEF_BUFFERS: 16
             </span>
             <span>•</span>
-            <span className="text-slate-300">
-              Source: <code className="text-cyan-300">linux/fs/pipe.c</code>
+            <span className="text-slate-600 dark:text-slate-300">
+              Source: <code className="text-sky-600 dark:text-cyan-300">linux/fs/pipe.c</code>
             </span>
           </div>
         </div>
