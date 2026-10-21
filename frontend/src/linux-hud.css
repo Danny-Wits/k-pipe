@@ -3,13 +3,14 @@
 @tailwind utilities;
 
 /* ==========================================================================
-   K-PIPE LINUX KERNEL PIPE VISUALIZER STYLESHEET
-   Deep Space Dark Obsidian Theme, Dimensional Glass Tubes, and Keyframes
+   K-PIPE LINUX CONCURRENCY ENGINE — BOLD HIGH-CONTRAST LIGHT THEME
+   Crisp White, Stark Pitch Black, Intense Red Accent, Editorial Typography
    ========================================================================== */
 
 :root {
-  --font-mono: 'JetBrains Mono', 'Fira Code', ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
-  --font-sans: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  --font-display: 'Syne', sans-serif;
+  --font-sans: 'Space Grotesk', -apple-system, sans-serif;
+  --font-mono: 'Space Mono', monospace;
 }
 
 * {
@@ -19,74 +20,58 @@
 }
 
 body {
-  background-color: #060913;
-  color: #f8fafc;
+  background-color: #ffffff;
+  color: #0a0a0a;
   font-family: var(--font-sans);
   min-height: 100vh;
   overflow-x: hidden;
-  background-image: 
-    radial-gradient(circle at 50% 0%, rgba(14, 165, 233, 0.08) 0%, transparent 60%),
-    linear-gradient(rgba(255, 255, 255, 0.02) 1px, transparent 1px),
-    linear-gradient(90deg, rgba(255, 255, 255, 0.02) 1px, transparent 1px);
-  background-size: 100% 100%, 32px 32px, 32px 32px;
+}
+
+.font-display {
+  font-family: var(--font-display);
 }
 
 .font-mono {
   font-family: var(--font-mono);
 }
 
-/* Glass Card Treatments (Dark Theme) */
-.glass-card {
-  background: #0b1021;
-  border: 1px solid rgba(51, 65, 85, 0.7);
-  border-radius: 1.5rem;
-  box-shadow: 0 10px 30px -5px rgba(0, 0, 0, 0.5), 0 1px 3px rgba(0, 0, 0, 0.3);
-  transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
-}
-
-.glass-card:hover {
-  border-color: rgba(56, 189, 248, 0.4);
-  box-shadow: 0 14px 35px -5px rgba(2, 132, 199, 0.15);
-}
-
-/* Custom Sliders for Dark Mode */
+/* Range input styling: solid black track with red handle */
 input[type="range"] {
   appearance: none;
-  background: #1e293b;
-  height: 8px;
-  border-radius: 4px;
+  background: #0a0a0a;
+  height: 6px;
+  border-radius: 0px;
   outline: none;
 }
 
 input[type="range"]::-webkit-slider-thumb {
   appearance: none;
-  width: 18px;
-  height: 18px;
-  border-radius: 50%;
+  width: 20px;
+  height: 20px;
+  border-radius: 4px;
   cursor: pointer;
-  background: #38bdf8;
-  border: 2px solid #0f172a;
-  box-shadow: 0 0 10px rgba(56, 189, 248, 0.5);
-  transition: transform 0.1s ease, box-shadow 0.1s ease;
+  background: #e11d48;
+  border: 2px solid #000000;
+  box-shadow: 2px 2px 0px 0px #000000;
+  transition: transform 0.1s ease;
 }
 
 input[type="range"]::-webkit-slider-thumb:hover {
-  transform: scale(1.2);
-  box-shadow: 0 0 16px rgba(56, 189, 248, 0.8);
+  transform: scale(1.15);
 }
 
-/* Scrollbar Customization */
+/* Crisp Scrollbar */
 ::-webkit-scrollbar {
-  width: 6px;
-  height: 6px;
+  width: 8px;
+  height: 8px;
 }
 ::-webkit-scrollbar-track {
-  background: #070b14;
+  background: #f4f4f5;
+  border-left: 1px solid #e4e4e7;
 }
 ::-webkit-scrollbar-thumb {
-  background: #1e293b;
-  border-radius: 3px;
+  background: #0a0a0a;
 }
 ::-webkit-scrollbar-thumb:hover {
-  background: #334155;
+  background: #e11d48;
 }

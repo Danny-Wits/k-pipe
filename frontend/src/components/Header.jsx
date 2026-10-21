@@ -1,18 +1,6 @@
 import React, { useState } from 'react';
-import {
-  Lock,
-  Unlock,
-  Radio,
-  Volume2,
-  VolumeX,
-  BookOpen,
-  Activity,
-  Terminal,
-  Cpu,
-  GitBranch
-} from 'lucide-react';
+import { Volume2, VolumeX, GitBranch } from 'lucide-react';
 import { sounds } from '../audio/SoundEffects';
-import { SCENARIOS } from '../hooks/useKernelTelemetry';
 
 export default function Header({
   telemetry,
@@ -21,7 +9,6 @@ export default function Header({
   activeChapter,
   onSelectChapter
 }) {
-  const currentScenario = SCENARIOS[telemetry?.scenario] || SCENARIOS.CAT_GREP;
   const isMutexLocked = Boolean(telemetry?.mutexLocked);
   const [isMuted, setIsMuted] = useState(true);
 
@@ -34,81 +21,37 @@ export default function Header({
   const isFullSim = activeChapter === 4;
 
   return (
-    <header className="bg-[#0b1021] rounded-2xl border-2 border-slate-800 p-3.5 sm:p-5 shadow-[5px_5px_0px_0px_rgba(0,0,0,0.8)] mb-6 transition-all">
-      <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-4">
-        {/* ─── LEFT: AUTHENTIC UNIX PIPE BRAND & KERNEL METRICS ─── */}
-        <div className="flex items-center gap-3.5">
-          {/* Custom Machined Pipeline Insignia */}
-          <div className="relative flex items-center justify-center w-12 h-12 rounded-xl bg-slate-950 text-white border-2 border-slate-700 shadow-[2px_2px_0px_0px_rgba(56,189,248,0.4)] shrink-0 group">
-            <svg
-              className="w-7 h-7 text-sky-400 group-hover:scale-110 transition-transform"
-              viewBox="0 0 32 32"
-              fill="none"
-              xmlns="http://www.w3.org/2000/svg"
-            >
-              {/* Conduit tube outer */}
-              <rect x="2" y="10" width="28" height="12" rx="3" stroke="currentColor" strokeWidth="2.2" fill="#070b14" />
-              {/* Traveling pipe capsule inside */}
-              <circle cx="16" cy="16" r="3.5" fill="#38bdf8" />
-              {/* Center pipe divider / backpressure gate */}
-              <line x1="16" y1="6" x2="16" y2="10" stroke="#f43f5e" strokeWidth="2.5" strokeLinecap="round" />
-              <line x1="16" y1="22" x2="16" y2="26" stroke="#f43f5e" strokeWidth="2.5" strokeLinecap="round" />
-              {/* Ingress flow arrowhead */}
-              <path d="M6 16L10 13V19L6 16Z" fill="#10b981" />
-              {/* Egress flow arrowhead */}
-              <path d="M22 13L26 16L22 19V13Z" fill="#10b981" />
-            </svg>
-            {/* Blinking hardware status point */}
-            <span className="absolute -top-1 -right-1 w-2.5 h-2.5 rounded-full bg-emerald-400 border-2 border-slate-900" />
+    <header className="bg-white border-2 border-black p-4 sm:p-5 shadow-[4px_4px_0px_0px_#000000] mb-6">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+        {/* Left: Bold Identity (No useless small badges) */}
+        <div className="flex items-center gap-3">
+          <div className="w-10 h-10 bg-black text-white flex items-center justify-center font-display font-black text-xl border-2 border-black shadow-[2px_2px_0px_0px_#e11d48] shrink-0">
+            K
           </div>
-
           <div>
-            <div className="flex flex-wrap items-center gap-2">
-              <span className="text-xl sm:text-2xl font-black font-mono tracking-tight text-white uppercase">
-                K·PIPE
-              </span>
-              <span className="text-[10px] font-mono font-black px-2 py-0.5 rounded-md bg-sky-500 text-slate-950 tracking-widest uppercase">
-                v1.0.0
-              </span>
-              <span className="text-[11px] font-mono font-bold px-2 py-0.5 rounded-md bg-sky-950/80 text-sky-400 border border-sky-800">
-                sys_pipe2(2)
-              </span>
-              <span className="hidden sm:inline-block text-[11px] font-mono font-bold px-2 py-0.5 rounded-md bg-slate-900 text-slate-300 border border-slate-800">
-                fs/pipe.c
-              </span>
-            </div>
-
-            <div className="flex flex-wrap items-center gap-2 text-[11px] font-mono text-slate-400 mt-0.5">
-              <span className="font-bold text-slate-300">struct pipe_inode_info</span>
-              <span className="text-slate-600">•</span>
-              <span>16-Slot FIFO Ring (64 KB)</span>
-              <span className="text-slate-600">•</span>
-              <span className="text-emerald-400 font-extrabold flex items-center gap-1">
-                <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 inline-block animate-pulse" />
-                ring0 ⇋ ring3 IPC
-              </span>
-            </div>
+            <h1 className="font-display font-black text-2xl tracking-tight text-black leading-none">
+              K-PIPE
+            </h1>
+            <p className="font-mono text-xs text-neutral-500 font-bold mt-1 tracking-wider uppercase">
+              Linux Concurrency Engine
+            </p>
           </div>
         </div>
 
-        {/* ─── CENTER: MACHINED HARDWARE SEGMENTED MODE SWITCH ─── */}
-        <div className="flex items-center p-1 bg-[#070b14] rounded-xl border-2 border-slate-800 font-mono text-xs shadow-[2px_2px_0px_0px_rgba(0,0,0,0.6)] self-start lg:self-center">
+        {/* Center: Tactile Mode Switcher (No // and no blinking dots) */}
+        <div className="flex items-center border-2 border-black p-1 bg-neutral-100 shadow-[2px_2px_0px_0px_#000000] self-start sm:self-center">
           <button
             onClick={() => {
               sounds.playClick();
               onSelectChapter(1);
             }}
-            className={`flex items-center gap-2 px-3.5 py-1.5 rounded-lg font-black uppercase tracking-tight transition-all ${
+            className={`px-4 py-2 text-xs font-mono font-bold uppercase tracking-wider transition-all ${
               !isFullSim
-                ? 'bg-sky-600 text-white shadow-sm'
-                : 'text-slate-400 hover:text-white hover:bg-slate-800/60'
+                ? 'bg-black text-white shadow-sm'
+                : 'text-neutral-600 hover:text-black'
             }`}
           >
-            <BookOpen className="w-3.5 h-3.5 text-sky-200" />
-            <span>01 // Story Mode</span>
-            {!isFullSim && (
-              <span className="w-1.5 h-1.5 rounded-full bg-white animate-ping ml-0.5" />
-            )}
+            Story Walkthrough
           </button>
 
           <button
@@ -116,99 +59,51 @@ export default function Header({
               sounds.playClick();
               onSelectChapter(4);
             }}
-            className={`flex items-center gap-2 px-3.5 py-1.5 rounded-lg font-black uppercase tracking-tight transition-all ${
+            className={`px-4 py-2 text-xs font-mono font-bold uppercase tracking-wider transition-all ${
               isFullSim
-                ? 'bg-sky-600 text-white shadow-sm'
-                : 'text-slate-400 hover:text-white hover:bg-slate-800/60'
+                ? 'bg-red-600 text-white shadow-sm'
+                : 'text-neutral-600 hover:text-black'
             }`}
           >
-            <Activity className="w-3.5 h-3.5 text-emerald-300" />
-            <span>02 // Kernel Lab ⚡</span>
-            {isFullSim && (
-              <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-ping ml-0.5" />
-            )}
+            Interactive Lab
           </button>
         </div>
 
-        {/* ─── RIGHT: REAL HARDWARE TELEMETRY INSTRUMENTS ─── */}
-        <div className="flex flex-wrap items-center gap-2 font-mono text-xs">
-          {/* Mutex Bus Monitor */}
+        {/* Right: Essential State Controls */}
+        <div className="flex items-center gap-2.5 font-mono text-xs">
+          {/* Mutex State (No blinking) */}
           <div
-            className={`flex items-center gap-1.5 px-3 py-1.5 rounded-xl border-2 transition-all ${
+            className={`px-3 py-1.5 font-bold uppercase border-2 border-black shadow-[2px_2px_0px_0px_#000000] ${
               isMutexLocked
-                ? 'bg-rose-950/70 text-rose-300 border-rose-600 shadow-sm'
-                : 'bg-slate-900 text-slate-300 border-slate-800'
+                ? 'bg-red-600 text-white'
+                : 'bg-white text-black'
             }`}
-            title="pipe->mutex serializes sys_write() and sys_read() in fs/pipe.c"
           >
-            {isMutexLocked ? (
-              <>
-                <Lock className="w-3.5 h-3.5 text-rose-400 animate-pulse" />
-                <span className="font-black text-[11px] text-rose-300">MUTEX_HELD</span>
-              </>
-            ) : (
-              <>
-                <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse" />
-                <span className="font-extrabold text-[11px] text-slate-300">MUTEX_FREE</span>
-              </>
-            )}
+            {isMutexLocked ? 'MUTEX: LOCKED' : 'MUTEX: FREE'}
           </div>
 
-          {/* Daemon Telemetry Link */}
-          <div
-            className={`flex items-center gap-1.5 px-3 py-1.5 rounded-xl border-2 ${
-              isConnected
-                ? 'bg-emerald-950/60 border-emerald-700 text-emerald-300'
-                : 'bg-amber-950/60 border-amber-700 text-amber-300'
-            }`}
-            title={isConnected ? 'Connected to live Java kernel simulation server' : 'Running internal virtual kernel telemetry engine'}
-          >
-            <Radio
-              className={`w-3.5 h-3.5 ${
-                isConnected ? 'text-emerald-400 animate-pulse' : 'text-amber-400'
-              }`}
-            />
-            <span className="font-black text-[11px]">
-              {isConnected ? 'IPC :8080' : 'V-BUS 60FPS'}
-            </span>
-          </div>
-
-          {/* Procedural Audio Chip Controller */}
+          {/* Sound Toggle */}
           <button
             onClick={toggleSound}
-            className={`flex items-center gap-2 px-3 py-1.5 rounded-xl border-2 font-black text-[11px] transition-all shadow-sm active:translate-x-0.5 active:translate-y-0.5 ${
+            className={`flex items-center gap-1.5 px-3 py-1.5 border-2 border-black font-bold uppercase transition-all shadow-[2px_2px_0px_0px_#000000] active:translate-x-0.5 active:translate-y-0.5 ${
               isMuted
-                ? 'bg-slate-900 border-slate-800 text-slate-400 hover:text-white hover:border-slate-700'
-                : 'bg-sky-950/80 border-sky-500 text-sky-200 shadow-[2px_2px_0px_0px_rgba(56,189,248,0.4)]'
+                ? 'bg-neutral-100 text-neutral-500 hover:text-black'
+                : 'bg-black text-white'
             }`}
-            title={isMuted ? 'Click to enable Web Audio synthesizer sound effects' : 'Click to mute sound effects'}
           >
-            {isMuted ? (
-              <>
-                <VolumeX className="w-3.5 h-3.5 text-slate-500" />
-                <span>FX: OFF</span>
-              </>
-            ) : (
-              <>
-                <div className="flex items-end gap-0.5 h-3">
-                  <span className="w-1 bg-sky-400 animate-bounce h-2 rounded-full" />
-                  <span className="w-1 bg-sky-400 animate-bounce h-3 rounded-full delay-75" />
-                  <span className="w-1 bg-sky-400 animate-bounce h-1.5 rounded-full delay-150" />
-                </div>
-                <span>FX: LIVE</span>
-              </>
-            )}
+            {isMuted ? <VolumeX className="w-3.5 h-3.5" /> : <Volume2 className="w-3.5 h-3.5 text-red-400" />}
+            <span>{isMuted ? 'MUTE' : 'AUDIO'}</span>
           </button>
 
-          {/* GitHub Source Link */}
+          {/* GitHub Link */}
           <a
             href="https://github.com/Danny-Wits/k-pipe"
             target="_blank"
             rel="noopener noreferrer"
-            className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl border-2 border-slate-800 bg-slate-900 hover:bg-slate-800 text-white font-black text-[11px] shadow-[2px_2px_0px_0px_rgba(0,0,0,0.8)] active:translate-x-0.5 active:translate-y-0.5 transition-all"
-            title="View open source repository on GitHub"
+            className="flex items-center gap-1.5 px-3 py-1.5 border-2 border-black bg-white hover:bg-black hover:text-white text-black font-bold uppercase shadow-[2px_2px_0px_0px_#000000] transition-all"
+            title="GitHub Repository"
           >
-            <GitBranch className="w-3.5 h-3.5 text-sky-400" />
+            <GitBranch className="w-3.5 h-3.5 text-red-600" />
             <span className="hidden sm:inline">REPO</span>
           </a>
         </div>

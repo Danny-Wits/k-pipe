@@ -5,7 +5,7 @@ import PhysicalPipelineStage from './components/PhysicalPipelineStage';
 import ControlDeck from './components/ControlDeck';
 import BufferSlotMatrix from './components/BufferSlotMatrix';
 import { useKernelTelemetry } from './hooks/useKernelTelemetry';
-import { Cpu, Shield, BookOpen, Sparkles, ArrowLeft } from 'lucide-react';
+import { Cpu, Shield, Sparkles, ArrowLeft } from 'lucide-react';
 import { sounds } from './audio/SoundEffects';
 
 export default function App() {
@@ -18,7 +18,7 @@ export default function App() {
   };
 
   return (
-    <div className="min-h-screen bg-[#060913] text-slate-100 flex flex-col justify-between selection:bg-sky-500 selection:text-white antialiased font-sans">
+    <div className="min-h-screen bg-white text-black flex flex-col justify-between selection:bg-red-600 selection:text-white antialiased font-sans">
       <div className="max-w-[1450px] w-full mx-auto p-3 sm:p-6 flex-1 space-y-6">
         {/* Header Bar */}
         <Header
@@ -39,9 +39,9 @@ export default function App() {
             />
 
             {/* Quick Skip Banner */}
-            <div className="p-4 rounded-2xl bg-[#0b1021] border border-slate-800 flex flex-col sm:flex-row items-center justify-between gap-3 font-mono text-xs shadow-md">
-              <div className="flex items-center gap-2 text-slate-400">
-                <Sparkles className="w-4 h-4 text-sky-400" />
+            <div className="p-4 bg-white border-2 border-black flex flex-col sm:flex-row items-center justify-between gap-3 font-mono text-xs shadow-[4px_4px_0px_0px_#000000]">
+              <div className="flex items-center gap-2 text-neutral-700">
+                <Sparkles className="w-4 h-4 text-red-600 shrink-0" />
                 <span>Already know the theory? Skip directly to hands-on experimentation.</span>
               </div>
               <button
@@ -49,27 +49,26 @@ export default function App() {
                   sounds.playChime();
                   handleSelectChapter(4);
                 }}
-                className="px-4 py-2 rounded-xl bg-sky-600 hover:bg-sky-500 text-white font-black uppercase text-xs tracking-wider flex items-center gap-1.5 shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] active:scale-95 transition-all"
+                className="px-4 py-2 bg-black hover:bg-neutral-800 text-white font-mono font-bold uppercase text-xs tracking-wider flex items-center gap-1.5 border-2 border-black shadow-[2px_2px_0px_0px_#e11d48] active:translate-x-0.5 active:translate-y-0.5 transition-all"
               >
-                <span>Jump to Full Simulator ⚡</span>
+                <span>Jump to Simulator Lab</span>
               </button>
             </div>
           </main>
         ) : (
           /* ─── CHAPTER 4: THE FULL LIVE ENGINE LAB ─── */
-          <main className="space-y-6 animate-in fade-in duration-300">
-            {/* Lab Mode Top Banner */}
-            <div className="p-4 sm:p-5 rounded-3xl bg-[#0b1021] text-white border-2 border-slate-800 shadow-[6px_6px_0px_0px_rgba(2,132,199,0.25)] flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 font-mono">
+          <main className="space-y-6 animate-in fade-in duration-200">
+            {/* Lab Mode Top Banner (No //) */}
+            <div className="p-5 bg-black text-white border-2 border-black shadow-[6px_6px_0px_0px_#e11d48] flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 font-mono">
               <div>
-                <div className="flex items-center gap-2 text-sky-400 text-xs font-black uppercase tracking-wider mb-1">
-                  <span>CHAPTER 04 // FINAL DESTINATION</span>
-                  <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-ping" />
+                <div className="text-red-400 text-xs font-bold uppercase tracking-wider mb-1">
+                  CHAPTER 4: INTERACTIVE LAB ENGINE
                 </div>
-                <h2 className="text-xl sm:text-2xl font-black uppercase tracking-tight text-white">
-                  THE LIVE KERNEL CONCURRENCY ENGINE
+                <h2 className="font-display text-xl sm:text-2xl font-black uppercase tracking-tight text-white">
+                  LIVE KERNEL CONCURRENCY ENGINE
                 </h2>
-                <p className="text-xs text-slate-400 mt-0.5">
-                  Full physical pipe simulation, real-time memory ring buffer &amp; velocity throttles
+                <p className="text-xs text-neutral-300 mt-0.5">
+                  Physical pipe simulation, circular memory ring buffer and velocity throttles
                 </p>
               </div>
 
@@ -78,7 +77,7 @@ export default function App() {
                   sounds.playClick();
                   handleSelectChapter(1);
                 }}
-                className="px-4 py-2 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-200 border border-slate-700 text-xs font-bold uppercase flex items-center gap-2 transition-all shrink-0"
+                className="px-4 py-2.5 bg-white text-black hover:bg-neutral-100 border-2 border-black text-xs font-bold uppercase flex items-center gap-2 transition-all shrink-0 shadow-[2px_2px_0px_0px_#000000]"
               >
                 <ArrowLeft className="w-3.5 h-3.5" />
                 <span>Review Story Walkthrough</span>
@@ -123,25 +122,25 @@ export default function App() {
       </div>
 
       {/* Linux Kernel Footer */}
-      <footer className="mt-10 border-t border-slate-800/80 bg-[#070b14] py-5 px-4 text-center text-xs text-slate-400 font-mono">
+      <footer className="mt-10 border-t-2 border-black bg-white py-6 px-4 text-center text-xs text-neutral-600 font-mono">
         <div className="max-w-[1450px] mx-auto flex flex-col sm:flex-row items-center justify-between gap-3">
-          <div className="flex items-center gap-2">
-            <span className="text-sky-400 font-bold">🐧 K-PIPE</span>
-            <span className="text-slate-600">•</span>
-            <span className="text-slate-300 font-semibold">Linux Kernel Anonymous Pipe &amp; Concurrency Engine</span>
+          <div className="flex items-center gap-2 font-bold text-black">
+            <span>K-PIPE</span>
+            <span>•</span>
+            <span className="text-neutral-700">Linux Kernel Anonymous Pipe Concurrency Engine</span>
           </div>
 
-          <div className="flex flex-wrap items-center justify-center gap-4 text-[11px] text-slate-400">
-            <span className="flex items-center gap-1 font-semibold text-slate-300">
-              <Cpu className="w-3.5 h-3.5 text-sky-400" /> PAGE_SIZE: 4096 B
+          <div className="flex flex-wrap items-center justify-center gap-4 text-xs text-neutral-600">
+            <span className="font-bold text-black">
+              PAGE_SIZE: 4096 BYTES
             </span>
-            <span className="text-slate-600">•</span>
-            <span className="flex items-center gap-1 font-semibold text-slate-300">
-              <Shield className="w-3.5 h-3.5 text-emerald-400" /> PIPE_DEF_BUFFERS: 16
+            <span>•</span>
+            <span className="font-bold text-black">
+              PIPE_DEF_BUFFERS: 16
             </span>
-            <span className="text-slate-600">•</span>
-            <span className="text-slate-400">
-              Implementation: <code className="text-sky-400 font-bold">linux/fs/pipe.c</code>
+            <span>•</span>
+            <span>
+              Source: <code className="text-red-600 font-bold">fs/pipe.c</code>
             </span>
           </div>
         </div>

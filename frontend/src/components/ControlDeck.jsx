@@ -63,7 +63,6 @@ export default function ControlDeck({ telemetry, sendCommand }) {
     sendCommand({ action: 'STEP' });
   };
 
-  // Dramatic Experience Presets
   const triggerDramaPreset = (type) => {
     sounds.playClick();
     if (type === 'BACKPRESSURE') {
@@ -94,7 +93,6 @@ export default function ControlDeck({ telemetry, sendCommand }) {
         spread: 60,
         origin: { y: 0.7 }
       });
-      // Fire rapid writes
       for (let i = 0; i < 5; i++) {
         setTimeout(() => sendCommand({ action: 'STEP' }), i * 60);
       }
@@ -102,31 +100,31 @@ export default function ControlDeck({ telemetry, sendCommand }) {
   };
 
   return (
-    <div className="bg-[#0b1021] rounded-3xl border-2 border-slate-800 p-5 sm:p-6 shadow-[0_10px_35px_-8px_rgba(0,0,0,0.6)]">
+    <div className="bg-white border-2 border-black p-5 sm:p-6 shadow-[6px_6px_0px_0px_#000000]">
       {/* Header Bar */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between pb-4 mb-5 border-b border-slate-800 gap-3">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between pb-4 mb-5 border-b-2 border-black gap-3">
         <div className="flex items-center gap-2.5">
-          <div className="w-8 h-8 rounded-xl bg-slate-900 text-sky-400 flex items-center justify-center border border-slate-700">
+          <div className="w-9 h-9 bg-black text-white flex items-center justify-center border-2 border-black">
             <Sliders className="w-4 h-4" />
           </div>
           <div>
-            <h2 className="font-mono text-sm sm:text-base font-extrabold text-white tracking-tight">
-              INTERACTIVE CONCURRENCY CONTROL DECK
+            <h2 className="font-display font-black text-base text-black uppercase tracking-tight">
+              CONCURRENCY CONTROL DECK
             </h2>
-            <p className="text-xs text-slate-400 font-mono">
-              Adjust thread velocity throttles &amp; observe realtime backpressure physics
+            <p className="text-xs text-neutral-500 font-mono">
+              Adjust thread velocity throttles and observe backpressure
             </p>
           </div>
         </div>
 
-        {/* Play/Pause & Step Primary Buttons */}
-        <div className="flex items-center gap-2">
+        {/* Primary Controls */}
+        <div className="flex items-center gap-2 font-mono">
           <button
             onClick={handleTogglePause}
-            className={`flex items-center gap-2 px-4 py-2 rounded-xl font-mono text-xs font-bold transition-all shadow-sm ${
+            className={`flex items-center gap-2 px-4 py-2 border-2 border-black font-bold text-xs uppercase transition-all shadow-[2px_2px_0px_0px_#000] active:translate-x-0.5 active:translate-y-0.5 ${
               isPaused
-                ? 'bg-emerald-600 hover:bg-emerald-500 text-white shadow-emerald-500/25 active:scale-95'
-                : 'bg-amber-600 hover:bg-amber-500 text-white shadow-amber-500/25 active:scale-95'
+                ? 'bg-emerald-600 text-white'
+                : 'bg-black text-white'
             }`}
           >
             {isPaused ? <Play className="w-3.5 h-3.5 fill-current" /> : <Pause className="w-3.5 h-3.5 fill-current" />}
@@ -137,10 +135,10 @@ export default function ControlDeck({ telemetry, sendCommand }) {
             onClick={handleStep}
             disabled={!isPaused}
             title={isPaused ? 'Step single syscall' : 'Pause execution to step'}
-            className={`flex items-center gap-1.5 px-3.5 py-2 rounded-xl font-mono text-xs font-semibold border transition-all ${
+            className={`flex items-center gap-1.5 px-3.5 py-2 border-2 border-black font-bold text-xs uppercase transition-all shadow-[2px_2px_0px_0px_#000] ${
               isPaused
-                ? 'bg-slate-900 border-slate-700 text-sky-300 hover:bg-slate-800 shadow-sm active:scale-95'
-                : 'bg-slate-950 border-slate-850 text-slate-600 cursor-not-allowed'
+                ? 'bg-white text-black hover:bg-neutral-100 active:translate-x-0.5 active:translate-y-0.5'
+                : 'bg-neutral-100 text-neutral-400 cursor-not-allowed'
             }`}
           >
             <StepForward className="w-3.5 h-3.5" />
@@ -150,22 +148,21 @@ export default function ControlDeck({ telemetry, sendCommand }) {
       </div>
 
       {/* Main Controls Grid */}
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 font-mono">
         {/* Column 1: Smooth Velocity Throttles */}
-        <div className="space-y-5 bg-[#070b14] p-4 rounded-2xl border border-slate-800">
+        <div className="space-y-5 bg-neutral-50 p-5 border-2 border-black shadow-[4px_4px_0px_0px_#000]">
           <div>
-            <div className="flex items-center justify-between text-xs font-mono mb-2">
-              <span className="text-slate-200 font-bold flex items-center gap-2">
-                <span className="w-2.5 h-2.5 rounded-full bg-emerald-400" />
+            <div className="flex items-center justify-between text-xs mb-2">
+              <span className="text-black font-bold uppercase">
                 Producer Write Throttle
               </span>
-              <span className="text-emerald-300 font-mono font-extrabold bg-emerald-950/80 px-2 py-0.5 rounded-md border border-emerald-700">
+              <span className="text-black font-bold bg-white px-2 py-0.5 border border-black">
                 {config.writeDelayMs} ms
               </span>
             </div>
 
             <div className="flex items-center gap-2.5">
-              <span className="text-[11px] font-mono text-emerald-400 font-bold">Fast ⚡</span>
+              <span className="text-xs text-black font-bold">Fast</span>
               <input
                 type="range"
                 min="50"
@@ -173,25 +170,24 @@ export default function ControlDeck({ telemetry, sendCommand }) {
                 step="25"
                 value={config.writeDelayMs}
                 onChange={handleWriteDelayChange}
-                className="w-full accent-emerald-500 cursor-pointer h-2 bg-slate-800 rounded-lg"
+                className="w-full"
               />
-              <span className="text-[11px] font-mono text-slate-500">Slow 🐌</span>
+              <span className="text-xs text-neutral-500">Slow</span>
             </div>
           </div>
 
-          <div className="pt-2 border-t border-slate-800/80">
-            <div className="flex items-center justify-between text-xs font-mono mb-2">
-              <span className="text-slate-200 font-bold flex items-center gap-2">
-                <span className="w-2.5 h-2.5 rounded-full bg-indigo-400" />
+          <div className="pt-3 border-t-2 border-black">
+            <div className="flex items-center justify-between text-xs mb-2">
+              <span className="text-black font-bold uppercase">
                 Consumer Read Throttle
               </span>
-              <span className="text-indigo-300 font-mono font-extrabold bg-indigo-950/80 px-2 py-0.5 rounded-md border border-indigo-700">
+              <span className="text-black font-bold bg-white px-2 py-0.5 border border-black">
                 {config.readDelayMs} ms
               </span>
             </div>
 
             <div className="flex items-center gap-2.5">
-              <span className="text-[11px] font-mono text-indigo-400 font-bold">Fast ⚡</span>
+              <span className="text-xs text-black font-bold">Fast</span>
               <input
                 type="range"
                 min="50"
@@ -199,22 +195,22 @@ export default function ControlDeck({ telemetry, sendCommand }) {
                 step="25"
                 value={config.readDelayMs}
                 onChange={handleReadDelayChange}
-                className="w-full accent-indigo-500 cursor-pointer h-2 bg-slate-800 rounded-lg"
+                className="w-full"
               />
-              <span className="text-[11px] font-mono text-slate-500">Slow 🐌</span>
+              <span className="text-xs text-neutral-500">Slow</span>
             </div>
           </div>
         </div>
 
-        {/* Column 2: Buffer Capacity & Stress Test Presets */}
-        <div className="space-y-4 bg-[#070b14] p-4 rounded-2xl border border-slate-800 font-mono">
+        {/* Column 2: Capacity & Stress Presets */}
+        <div className="space-y-4 bg-neutral-50 p-5 border-2 border-black shadow-[4px_4px_0px_0px_#000]">
           <div>
             <div className="flex items-center justify-between text-xs mb-2">
-              <span className="text-slate-200 font-bold">
-                Buffer Size: <span className="text-sky-400 font-normal">fcntl(F_SETPIPE_SZ)</span>
+              <span className="text-black font-bold uppercase">
+                Buffer Size: F_SETPIPE_SZ
               </span>
-              <span className="text-[11px] font-bold text-sky-300 bg-sky-950/80 px-2 py-0.5 rounded border border-sky-700">
-                {currentCapacity} Slots ({currentCapacity * 4} KB)
+              <span className="text-xs font-bold text-black bg-white px-2 py-0.5 border border-black">
+                {currentCapacity} Pages ({currentCapacity * 4} KB)
               </span>
             </div>
 
@@ -223,10 +219,10 @@ export default function ControlDeck({ telemetry, sendCommand }) {
                 <button
                   key={pages}
                   onClick={() => handleCapacityChange(pages)}
-                  className={`py-2 px-2 rounded-xl text-xs font-bold border transition-all ${
+                  className={`py-2 px-2 text-xs font-bold border-2 border-black uppercase transition-all ${
                     currentCapacity === pages
-                      ? 'bg-sky-600 border-sky-500 text-white shadow-md shadow-sky-500/25'
-                      : 'bg-slate-900 border-slate-800 text-slate-300 hover:border-slate-700 hover:bg-slate-800'
+                      ? 'bg-black text-white shadow-[2px_2px_0px_0px_#e11d48]'
+                      : 'bg-white text-black hover:bg-neutral-100 shadow-[2px_2px_0px_0px_#000]'
                   }`}
                 >
                   {pages}p
@@ -235,55 +231,50 @@ export default function ControlDeck({ telemetry, sendCommand }) {
             </div>
           </div>
 
-          {/* 4 Dramatic Stress Presets */}
-          <div className="pt-2 border-t border-slate-800/80">
-            <span className="text-[10px] uppercase font-bold text-slate-500 block mb-2">
-              One-Click Stress Scenarios:
+          <div className="pt-3 border-t-2 border-black">
+            <span className="text-xs uppercase font-bold text-neutral-600 block mb-2">
+              Stress Test Presets:
             </span>
             <div className="grid grid-cols-2 gap-2 text-xs">
               <button
                 onClick={() => triggerDramaPreset('BACKPRESSURE')}
-                className="py-2 px-2.5 rounded-xl bg-rose-950/60 border border-rose-800 text-rose-300 hover:bg-rose-900/60 flex items-center justify-center gap-1.5 font-bold transition-all shadow-sm active:scale-95"
-                title="Fast Producer + Slow Consumer -> Pipe jams with stacked capsules"
+                className="py-2 px-2 bg-white hover:bg-red-50 text-red-600 border-2 border-black flex items-center justify-center gap-1.5 font-bold transition-all shadow-[2px_2px_0px_0px_#000] active:translate-x-0.5 active:translate-y-0.5 uppercase"
               >
-                <Flame className="w-3.5 h-3.5 text-rose-400" />
-                <span>Fill (Jam Pipe)</span>
+                <Flame className="w-3.5 h-3.5" />
+                <span>Fill (Jam)</span>
               </button>
 
               <button
                 onClick={() => triggerDramaPreset('STARVATION')}
-                className="py-2 px-2.5 rounded-xl bg-amber-950/60 border border-amber-800 text-amber-300 hover:bg-amber-900/60 flex items-center justify-center gap-1.5 font-bold transition-all shadow-sm active:scale-95"
-                title="Slow Producer + Fast Consumer -> Buffer empties to 0"
+                className="py-2 px-2 bg-white hover:bg-neutral-100 text-black border-2 border-black flex items-center justify-center gap-1.5 font-bold transition-all shadow-[2px_2px_0px_0px_#000] active:translate-x-0.5 active:translate-y-0.5 uppercase"
               >
-                <Snowflake className="w-3.5 h-3.5 text-amber-400" />
-                <span>Drain (Starve)</span>
+                <Snowflake className="w-3.5 h-3.5" />
+                <span>Drain (Dry)</span>
               </button>
 
               <button
                 onClick={() => triggerDramaPreset('EQUILIBRIUM')}
-                className="py-2 px-2.5 rounded-xl bg-emerald-950/60 border border-emerald-800 text-emerald-300 hover:bg-emerald-900/60 flex items-center justify-center gap-1.5 font-bold transition-all shadow-sm active:scale-95"
-                title="Writer = Reader -> Smooth 50% flow"
+                className="py-2 px-2 bg-white hover:bg-emerald-50 text-emerald-800 border-2 border-black flex items-center justify-center gap-1.5 font-bold transition-all shadow-[2px_2px_0px_0px_#000] active:translate-x-0.5 active:translate-y-0.5 uppercase"
               >
-                <Zap className="w-3.5 h-3.5 text-emerald-400" />
+                <Zap className="w-3.5 h-3.5 text-emerald-600" />
                 <span>Equilibrium</span>
               </button>
 
               <button
                 onClick={() => triggerDramaPreset('BURST')}
-                className="py-2 px-2.5 rounded-xl bg-indigo-950/60 border border-indigo-800 text-indigo-300 hover:bg-indigo-900/60 flex items-center justify-center gap-1.5 font-bold transition-all shadow-sm active:scale-95"
-                title="Inject high-velocity burst of capsules"
+                className="py-2 px-2 bg-black text-white hover:bg-neutral-800 border-2 border-black flex items-center justify-center gap-1.5 font-bold transition-all shadow-[2px_2px_0px_0px_#e11d48] active:translate-x-0.5 active:translate-y-0.5 uppercase"
               >
-                <Sparkles className="w-3.5 h-3.5 text-indigo-400" />
-                <span>Inject Burst</span>
+                <Sparkles className="w-3.5 h-3.5 text-yellow-400" />
+                <span>Burst Influx</span>
               </button>
             </div>
           </div>
         </div>
 
         {/* Column 3: Workload Pipeline Presets */}
-        <div className="bg-[#070b14] p-4 rounded-2xl border border-slate-800 font-mono">
-          <span className="text-xs text-slate-200 font-bold block mb-2.5">
-            Active Linux Workload Pipeline:
+        <div className="bg-neutral-50 p-5 border-2 border-black shadow-[4px_4px_0px_0px_#000]">
+          <span className="text-xs text-black font-bold uppercase block mb-2.5">
+            Workload Pipeline Scenario:
           </span>
 
           <div className="space-y-2">
@@ -291,24 +282,21 @@ export default function ControlDeck({ telemetry, sendCommand }) {
               <button
                 key={scen.id}
                 onClick={() => handleScenarioChange(scen.id)}
-                className={`w-full text-left p-2.5 rounded-xl border text-xs transition-all flex items-center justify-between ${
+                className={`w-full text-left p-3 border-2 border-black text-xs transition-all flex items-center justify-between ${
                   currentScenario === scen.id
-                    ? 'bg-sky-950/80 border-sky-600 text-white shadow-sm'
-                    : 'bg-slate-900 border-slate-800 text-slate-300 hover:border-slate-700'
+                    ? 'bg-black text-white shadow-[2px_2px_0px_0px_#e11d48]'
+                    : 'bg-white text-black hover:bg-neutral-100 shadow-[2px_2px_0px_0px_#000]'
                 }`}
               >
                 <div className="truncate pr-2">
-                  <div className="font-extrabold text-white flex items-center gap-1.5">
-                    {currentScenario === scen.id && <Check className="w-3.5 h-3.5 text-sky-400 shrink-0" />}
+                  <div className="font-bold flex items-center gap-1.5 uppercase">
+                    {currentScenario === scen.id && <Check className="w-3.5 h-3.5 text-red-400 shrink-0" />}
                     <span className="truncate">{scen.name}</span>
                   </div>
-                  <div className="text-[10px] text-slate-400 mt-0.5 truncate">
+                  <div className={`text-xs mt-0.5 truncate ${currentScenario === scen.id ? 'text-neutral-300' : 'text-neutral-500'}`}>
                     {scen.description}
                   </div>
                 </div>
-                <span className="text-[9px] bg-slate-950 px-1.5 py-0.5 rounded text-sky-400 uppercase border border-slate-800 font-bold shrink-0">
-                  IPC
-                </span>
               </button>
             ))}
           </div>

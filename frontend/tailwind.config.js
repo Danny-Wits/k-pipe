@@ -1,6 +1,5 @@
 /** @type {import('tailwindcss').Config} */
 export default {
-  darkMode: 'class',
   content: [
     "./index.html",
     "./src/**/*.{js,ts,jsx,tsx}",
@@ -8,18 +7,15 @@ export default {
   theme: {
     extend: {
       colors: {
-        'hud-black': '#07090e',
-        'hud-panel': '#0d111a',
-        'hud-elevated': '#131926',
-        'hud-card': '#182030',
-        'linux-cyan': '#00E5FF',
-        'linux-green': '#00E676',
-        'linux-amber': '#FFB300',
-        'linux-crimson': '#FF1744',
+        'kpipe-red': '#e11d48',
+        'kpipe-darkred': '#be123c',
+        'kpipe-black': '#0a0a0a',
+        'kpipe-gray': '#71717a',
       },
       fontFamily: {
-        mono: ['"JetBrains Mono"', '"Fira Code"', 'ui-monospace', 'monospace'],
-        sans: ['"Inter"', 'system-ui', 'sans-serif'],
+        display: ['"Syne"', 'sans-serif'],
+        sans: ['"Space Grotesk"', '-apple-system', 'sans-serif'],
+        mono: ['"Space Mono"', 'monospace'],
       }
     },
   },

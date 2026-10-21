@@ -1,84 +1,77 @@
 import React from 'react';
-import { Terminal, Zap, AlertCircle, CheckCircle2, RotateCw, ArrowDownRight, ArrowUpRight } from 'lucide-react';
+import { Terminal, AlertCircle, RotateCw, ArrowDownRight, ArrowUpRight } from 'lucide-react';
 
 export function ProducerStation({ producer, pageCount, capacity }) {
   const isRunning = producer.state === 'TASK_RUNNING';
 
   return (
     <div
-      className={`relative p-4 sm:p-5 rounded-2xl border-2 transition-all duration-300 bg-[#0b1021] flex flex-col justify-between shadow-[0_4px_20px_-4px_rgba(0,0,0,0.5)] ${
-        isRunning
-          ? 'border-emerald-500/60 shadow-[0_8px_25px_-6px_rgba(16,185,129,0.25)]'
-          : 'border-rose-500/60 shadow-[0_8px_25px_-6px_rgba(244,63,94,0.25)] bg-rose-950/20'
+      className={`relative p-5 border-2 border-black bg-white flex flex-col justify-between shadow-[4px_4px_0px_0px_#000000] ${
+        isRunning ? '' : 'bg-red-50'
       }`}
     >
       <div>
-        {/* Top Header */}
+        {/* Top Header (Clean, bold, no useless micro-badges) */}
         <div className="flex items-center justify-between gap-2 mb-3">
-          <div className="flex items-center gap-2">
-            {/* Animated Rotating Core */}
-            <div className={`w-8 h-8 rounded-xl flex items-center justify-center transition-colors ${
-              isRunning ? 'bg-emerald-950/80 text-emerald-400 border border-emerald-800' : 'bg-rose-950/80 text-rose-400 border border-rose-800'
+          <div className="flex items-center gap-2.5">
+            <div className={`w-9 h-9 border-2 border-black flex items-center justify-center ${
+              isRunning ? 'bg-black text-white' : 'bg-red-600 text-white'
             }`}>
               <RotateCw className={`w-4 h-4 ${isRunning ? 'animate-spin' : ''}`} style={{ animationDuration: '3s' }} />
             </div>
 
             <div>
-              <span className="text-[10px] font-mono font-bold uppercase tracking-wider text-emerald-400 bg-emerald-950/80 px-2 py-0.5 rounded-full border border-emerald-800 block w-fit">
+              <span className="text-xs font-mono font-bold uppercase tracking-wider text-neutral-500 block">
                 Producer Node
               </span>
-              <h3 className="font-mono font-extrabold text-sm sm:text-base text-white mt-1 flex items-center gap-1">
-                <Terminal className="w-3.5 h-3.5 text-emerald-400 shrink-0" />
-                <span className="truncate max-w-[150px] sm:max-w-none">{producer.name}</span>
+              <h3 className="font-display font-black text-base text-black flex items-center gap-1">
+                <Terminal className="w-3.5 h-3.5 text-neutral-600 shrink-0" />
+                <span className="truncate max-w-[170px] sm:max-w-none">{producer.name}</span>
               </h3>
             </div>
           </div>
-
-          {/* PID Pill */}
-          <span className="font-mono text-[10px] text-slate-400 bg-slate-900 px-2 py-1 rounded-md border border-slate-800 font-bold shrink-0">
-            PID {producer.pid}
-          </span>
         </div>
 
         {/* Telemetry Metrics */}
-        <div className="grid grid-cols-2 gap-2 my-3 p-2.5 rounded-xl bg-[#070b14] border border-slate-800/80 font-mono">
+        <div className="grid grid-cols-2 gap-2 my-3 p-3 bg-neutral-50 border-2 border-black font-mono">
           <div>
-            <span className="text-[10px] uppercase font-semibold text-slate-500 block">Throughput</span>
-            <span className="text-base font-extrabold text-emerald-400">{producer.rateKbPerSec || 0} <span className="text-xs font-normal text-slate-500">KB/s</span></span>
+            <span className="text-xs uppercase font-bold text-neutral-500 block">Throughput</span>
+            <span className="text-lg font-black text-black">
+              {producer.rateKbPerSec || 0} <span className="text-xs font-normal text-neutral-500">KB/s</span>
+            </span>
           </div>
           <div>
-            <span className="text-[10px] uppercase font-semibold text-slate-500 block">CPU Core</span>
-            <span className="text-base font-extrabold text-slate-200">{producer.cpuLoad?.toFixed(1) || '14.2'}%</span>
+            <span className="text-xs uppercase font-bold text-neutral-500 block">CPU Core</span>
+            <span className="text-lg font-black text-black">
+              {producer.cpuLoad?.toFixed(1) || '14.2'}%
+            </span>
           </div>
         </div>
 
         {/* Syscall Banner */}
-        <div className="flex items-center justify-between p-2 rounded-lg bg-[#070b14] border border-slate-800 text-xs font-mono">
+        <div className="flex items-center justify-between p-2.5 bg-neutral-100 border-2 border-black text-xs font-mono">
           <div className="flex items-center gap-1.5 truncate">
-            <ArrowDownRight className="w-3.5 h-3.5 text-emerald-400 shrink-0" />
-            <span className="text-slate-500 text-[11px]">Syscall:</span>
-            <code className="text-emerald-400 font-semibold text-[11px] truncate">
+            <ArrowDownRight className="w-3.5 h-3.5 text-neutral-700 shrink-0" />
+            <span className="text-neutral-500 text-xs font-bold">Syscall:</span>
+            <code className="text-black font-bold text-xs truncate">
               {producer.syscall || 'sys_write(pipefd[1])'}
             </code>
           </div>
-          <span className="text-[10px] font-bold text-slate-400 bg-slate-900 px-1.5 py-0.5 rounded border border-slate-800 shrink-0">
-            fd: 1
-          </span>
         </div>
       </div>
 
-      {/* Fixed Height Status Row (Zero Layout Shift) */}
-      <div className="h-9 mt-3">
+      {/* Fixed Height Status Row (Zero Layout Shift, No Blinking) */}
+      <div className="h-10 mt-3">
         {isRunning ? (
-          <div className="h-full px-3 rounded-xl border border-emerald-800/80 bg-emerald-950/50 text-emerald-300 text-[11px] font-mono font-medium flex items-center gap-2">
-            <span className="w-2 h-2 rounded-full bg-emerald-400 animate-ping" />
-            <span className="truncate">TASK_RUNNING (Active Writing to Pipe)</span>
+          <div className="h-full px-3 border-2 border-black bg-white text-black text-xs font-mono font-bold flex items-center gap-2">
+            <span className="w-2.5 h-2.5 bg-emerald-600 inline-block" />
+            <span className="truncate">TASK_RUNNING (Writing to Pipe)</span>
           </div>
         ) : (
-          <div className="h-full px-3 rounded-xl border border-rose-800/80 bg-rose-950/50 text-rose-300 text-[11px] font-mono font-semibold flex items-center gap-2 shadow-sm">
-            <AlertCircle className="w-3.5 h-3.5 text-rose-400 shrink-0 animate-bounce" />
+          <div className="h-full px-3 border-2 border-red-600 bg-red-600 text-white text-xs font-mono font-bold flex items-center gap-2 shadow-[2px_2px_0px_0px_#000]">
+            <AlertCircle className="w-4 h-4 text-white shrink-0" />
             <span className="truncate">
-              BLOCKED: Buffer Full ({pageCount}/{capacity})
+              SLEEPING (Buffer Full {pageCount}/{capacity})
             </span>
           </div>
         )}
@@ -92,77 +85,70 @@ export function ConsumerStation({ consumer, pageCount, capacity }) {
 
   return (
     <div
-      className={`relative p-4 sm:p-5 rounded-2xl border-2 transition-all duration-300 bg-[#0b1021] flex flex-col justify-between shadow-[0_4px_20px_-4px_rgba(0,0,0,0.5)] ${
-        isRunning
-          ? 'border-indigo-500/60 shadow-[0_8px_25px_-6px_rgba(99,102,241,0.25)]'
-          : 'border-amber-500/60 shadow-[0_8px_25px_-6px_rgba(245,158,11,0.25)] bg-amber-950/20'
+      className={`relative p-5 border-2 border-black bg-white flex flex-col justify-between shadow-[4px_4px_0px_0px_#000000] ${
+        isRunning ? '' : 'bg-neutral-50'
       }`}
     >
       <div>
         {/* Top Header */}
         <div className="flex items-center justify-between gap-2 mb-3">
-          <div className="flex items-center gap-2">
-            {/* Animated Rotating Turbine */}
-            <div className={`w-8 h-8 rounded-xl flex items-center justify-center transition-colors ${
-              isRunning ? 'bg-indigo-950/80 text-indigo-400 border border-indigo-800' : 'bg-amber-950/80 text-amber-400 border border-amber-800'
+          <div className="flex items-center gap-2.5">
+            <div className={`w-9 h-9 border-2 border-black flex items-center justify-center ${
+              isRunning ? 'bg-black text-white' : 'bg-neutral-200 text-black'
             }`}>
               <RotateCw className={`w-4 h-4 ${isRunning ? 'animate-spin' : ''}`} style={{ animationDuration: '3s', animationDirection: 'reverse' }} />
             </div>
 
             <div>
-              <span className="text-[10px] font-mono font-bold uppercase tracking-wider text-indigo-400 bg-indigo-950/80 px-2 py-0.5 rounded-full border border-indigo-800 block w-fit">
+              <span className="text-xs font-mono font-bold uppercase tracking-wider text-neutral-500 block">
                 Consumer Node
               </span>
-              <h3 className="font-mono font-extrabold text-sm sm:text-base text-white mt-1 flex items-center gap-1">
-                <Terminal className="w-3.5 h-3.5 text-indigo-400 shrink-0" />
-                <span className="truncate max-w-[150px] sm:max-w-none">{consumer.name}</span>
+              <h3 className="font-display font-black text-base text-black flex items-center gap-1">
+                <Terminal className="w-3.5 h-3.5 text-neutral-600 shrink-0" />
+                <span className="truncate max-w-[170px] sm:max-w-none">{consumer.name}</span>
               </h3>
             </div>
           </div>
-
-          {/* PID Pill */}
-          <span className="font-mono text-[10px] text-slate-400 bg-slate-900 px-2 py-1 rounded-md border border-slate-800 font-bold shrink-0">
-            PID {consumer.pid}
-          </span>
         </div>
 
         {/* Telemetry Metrics */}
-        <div className="grid grid-cols-2 gap-2 my-3 p-2.5 rounded-xl bg-[#070b14] border border-slate-800/80 font-mono">
+        <div className="grid grid-cols-2 gap-2 my-3 p-3 bg-neutral-50 border-2 border-black font-mono">
           <div>
-            <span className="text-[10px] uppercase font-semibold text-slate-500 block">Throughput</span>
-            <span className="text-base font-extrabold text-indigo-400">{consumer.rateKbPerSec || 0} <span className="text-xs font-normal text-slate-500">KB/s</span></span>
+            <span className="text-xs uppercase font-bold text-neutral-500 block">Throughput</span>
+            <span className="text-lg font-black text-black">
+              {consumer.rateKbPerSec || 0} <span className="text-xs font-normal text-neutral-500">KB/s</span>
+            </span>
           </div>
           <div>
-            <span className="text-[10px] uppercase font-semibold text-slate-500 block">CPU Core</span>
-            <span className="text-base font-extrabold text-slate-200">{consumer.cpuLoad?.toFixed(1) || '11.8'}%</span>
+            <span className="text-xs uppercase font-bold text-neutral-500 block">CPU Core</span>
+            <span className="text-lg font-black text-black">
+              {consumer.cpuLoad?.toFixed(1) || '11.8'}%
+            </span>
           </div>
         </div>
 
         {/* Syscall Banner */}
-        <div className="flex items-center justify-between p-2 rounded-lg bg-[#070b14] border border-slate-800 text-xs font-mono">
+        <div className="flex items-center justify-between p-2.5 bg-neutral-100 border-2 border-black text-xs font-mono">
           <div className="flex items-center gap-1.5 truncate">
-            <ArrowUpRight className="w-3.5 h-3.5 text-indigo-400 shrink-0" />
-            <span className="text-slate-500 text-[11px]">Syscall:</span>
-            <code className="text-indigo-400 font-semibold text-[11px] truncate">
+            <ArrowUpRight className="w-3.5 h-3.5 text-neutral-700 shrink-0" />
+            <span className="text-neutral-500 text-xs font-bold">Syscall:</span>
+            <code className="text-black font-bold text-xs truncate">
               {consumer.syscall || 'sys_read(pipefd[0])'}
             </code>
           </div>
-          <span className="text-[10px] font-bold text-slate-400 bg-slate-900 px-1.5 py-0.5 rounded border border-slate-800 shrink-0">
-            fd: 0
-          </span>
         </div>
       </div>
 
-      {/* Fixed Height Status Row (Zero Layout Shift) */}
-      <div className="h-9 mt-3">
+      {/* Fixed Height Status Row (Zero Layout Shift, No Blinking) */}
+      <div className="h-10 mt-3">
         {isRunning ? (
-          <div className="h-full px-3 rounded-xl border border-indigo-800/80 bg-indigo-950/50 text-indigo-300 text-[11px] font-mono font-medium flex items-center gap-2">
-            <span className="w-2 h-2 rounded-full bg-indigo-400 animate-ping" />
-            <span className="truncate">TASK_RUNNING (Active Reading from Pipe)</span>
+          <div className="h-full px-3 border-2 border-black bg-white text-black text-xs font-mono font-bold flex items-center gap-2">
+            <span className="w-2.5 h-2.5 bg-black inline-block" />
+            <span className="truncate">TASK_RUNNING (Reading from Pipe)</span>
           </div>
         ) : (
-          <div className="h-full px-3 rounded-xl border border-amber-800/80 bg-amber-950/50 text-amber-300 text-[11px] font-mono font-semibold flex items-center gap-2 shadow-sm">
-            <AlertCircle className="w-3.5 h-3.5 text-amber-400 shrink-0 animate-bounce" />
+          <div className="h-full px-3 border-2 border-black bg-neutral-100 text-black text-xs font-mono font-bold flex items-center gap-2 shadow-[2px_2px_0px_0px_#000]">
+            <AlertCircle className="w-4 h-4 text-black shrink-0" />
             <span className="truncate">
               STARVATION: Buffer Empty (0/{capacity})
             </span>

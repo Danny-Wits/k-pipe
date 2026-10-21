@@ -1,13 +1,6 @@
 import React, { useRef, useEffect } from 'react';
 import { sounds } from '../audio/SoundEffects';
 
-/**
- * 60 FPS HTML5 Canvas physical pipeline simulation (Dark Theme):
- * - Dimensional glass tubes with highlights & metal coupling collars
- * - Traveling glowing data capsules with neon particle trails
- * - Physical queue stacking at the gate when backpressure strikes
- * - Starvation drain when empty
- */
 export default function PipeHighwayCanvas({
   isWriterRunning,
   isReaderRunning,
@@ -19,7 +12,6 @@ export default function PipeHighwayCanvas({
 }) {
   const canvasRef = useRef(null);
 
-  // State refs for animation loop
   const animStateRef = useRef({
     ingressCapsules: [],
     egressCapsules: [],
@@ -35,7 +27,6 @@ export default function PipeHighwayCanvas({
     fillPercentage
   });
 
-  // Keep state refs updated without restarting the animation loop
   useEffect(() => {
     animStateRef.current = {
       ...animStateRef.current,
@@ -55,7 +46,6 @@ export default function PipeHighwayCanvas({
     const ctx = canvas.getContext('2d');
     let animationFrameId;
 
-    // Handle high DPI displays
     const resizeCanvas = () => {
       const rect = canvas.getBoundingClientRect();
       const dpr = window.devicePixelRatio || 1;
@@ -82,42 +72,37 @@ export default function PipeHighwayCanvas({
       const state = animStateRef.current;
       const centerY = height / 2;
 
-      // Pipe geometry
-      const pipeRadius = 18;
+      const pipeRadius = 16;
       const stationWidth = 140;
       const reservoirWidth = 160;
 
-      // Pipe 1 (Ingress): Left station to reservoir
       const p1Start = stationWidth - 10;
       const p1End = (width - reservoirWidth) / 2;
 
-      // Pipe 2 (Egress): Reservoir to right station
       const p2Start = (width + reservoirWidth) / 2;
       const p2End = width - stationWidth + 10;
 
       const isBufferFull = state.pageCount >= state.capacity;
       const isBufferEmpty = state.pageCount <= 0;
 
-      // ─── 1. Spawn Ingress Capsules ───
+      // Spawn Ingress Capsules
       const writeInterval = Math.max(80, state.writeDelayMs);
       if (state.isWriterRunning && currentTime - state.lastWriteSpawn > writeInterval) {
         state.lastWriteSpawn = currentTime;
-        // Don't spawn if queue is completely jammed
         if (state.ingressCapsules.length < 8) {
           state.ingressCapsules.push({
             x: p1Start + 10,
             targetX: p1End - 15,
-            speed: (p1End - p1Start) / (writeInterval * 1.8 / 1000), // Speed tied to delay
-            size: 11,
-            color: '#10b981', // Emerald
-            glowColor: 'rgba(16, 185, 129, 0.6)',
+            speed: (p1End - p1Start) / (writeInterval * 1.8 / 1000),
+            size: 10,
+            color: '#059669',
             id: Math.random()
           });
           sounds.playWhoosh();
         }
       }
 
-      // ─── 2. Spawn Egress Capsules ───
+      // Spawn Egress Capsules
       const readInterval = Math.max(80, state.readDelayMs);
       if (state.isReaderRunning && !isBufferEmpty && currentTime - state.lastReadSpawn > readInterval) {
         state.lastReadSpawn = currentTime;
@@ -126,70 +111,30 @@ export default function PipeHighwayCanvas({
             x: p2Start + 15,
             targetX: p2End - 10,
             speed: (p2End - p2Start) / (readInterval * 1.8 / 1000),
-            size: 11,
-            color: '#818cf8', // Electric Indigo
-            glowColor: 'rgba(129, 140, 248, 0.6)',
+            size: 10,
+            color: '#e11d48',
             id: Math.random()
           });
           sounds.playWhoosh();
         }
       }
 
-      // ─── 3. Draw Glass Pipes Background ───
-      const drawGlassPipe = (x1, x2, isBlocked, isStarved, flowColor) => {
+      // Draw Glass Pipes
+      const drawGlassPipe = (x1, x2, isBlocked, isStarved) => {
         const pipeLen = x2 - x1;
 
-        // Pipe outer shadow
-        ctx.save();
-        ctx.shadowColor = 'rgba(0, 0, 0, 0.6)';
-        ctx.shadowBlur = 10;
-        ctx.shadowOffsetY = 4;
-
-        // Dark glass pipe casing
-        const grad = ctx.createLinearGradient(0, centerY - pipeRadius, 0, centerY + pipeRadius);
-        grad.addColorStop(0, 'rgba(15, 23, 42, 0.95)');
-        grad.addColorStop(0.3, 'rgba(30, 41, 59, 0.95)');
-        grad.addColorStop(0.7, 'rgba(15, 23, 42, 0.95)');
-        grad.addColorStop(1, 'rgba(7, 11, 20, 0.98)');
-
-        ctx.fillStyle = grad;
+        // Pipe casing
+        ctx.fillStyle = '#f8fafc';
+        ctx.strokeStyle = '#000000';
+        ctx.lineWidth = 2.5;
         ctx.beginPath();
-        ctx.roundRect(x1, centerY - pipeRadius, pipeLen, pipeRadius * 2, 8);
+        ctx.rect(x1, centerY - pipeRadius, pipeLen, pipeRadius * 2);
         ctx.fill();
-
-        ctx.strokeStyle = 'rgba(56, 189, 248, 0.2)';
-        ctx.lineWidth = 1.5;
         ctx.stroke();
-        ctx.restore();
 
-        // Inner chamber (fluid lumen)
-        const innerRadius = pipeRadius - 3;
-        const innerGrad = ctx.createLinearGradient(0, centerY - innerRadius, 0, centerY + innerRadius);
-        if (isBlocked) {
-          innerGrad.addColorStop(0, 'rgba(244, 63, 94, 0.15)');
-          innerGrad.addColorStop(0.5, 'rgba(244, 63, 94, 0.35)');
-          innerGrad.addColorStop(1, 'rgba(244, 63, 94, 0.15)');
-        } else if (isStarved) {
-          innerGrad.addColorStop(0, 'rgba(15, 23, 42, 0.4)');
-          innerGrad.addColorStop(1, 'rgba(30, 41, 59, 0.4)');
-        } else {
-          innerGrad.addColorStop(0, 'rgba(14, 165, 233, 0.15)');
-          innerGrad.addColorStop(0.5, 'rgba(14, 165, 233, 0.3)');
-          innerGrad.addColorStop(1, 'rgba(14, 165, 233, 0.15)');
-        }
-
-        ctx.fillStyle = innerGrad;
-        ctx.beginPath();
-        ctx.roundRect(x1 + 3, centerY - innerRadius, pipeLen - 6, innerRadius * 2, 6);
-        ctx.fill();
-
-        // Glowing center guide laser
-        ctx.strokeStyle = isBlocked
-          ? 'rgba(244, 63, 94, 0.45)'
-          : isStarved
-          ? 'rgba(100, 116, 139, 0.25)'
-          : flowColor;
-        ctx.lineWidth = 1.5;
+        // Inner guide
+        ctx.strokeStyle = isBlocked ? '#e11d48' : '#cbd5e1';
+        ctx.lineWidth = 2;
         ctx.setLineDash([4, 4]);
         ctx.beginPath();
         ctx.moveTo(x1 + 10, centerY);
@@ -197,23 +142,10 @@ export default function PipeHighwayCanvas({
         ctx.stroke();
         ctx.setLineDash([]);
 
-        // Specular top highlight (glass reflection shine)
-        ctx.strokeStyle = 'rgba(255, 255, 255, 0.25)';
-        ctx.lineWidth = 2.0;
-        ctx.beginPath();
-        ctx.moveTo(x1 + 8, centerY - pipeRadius + 4);
-        ctx.lineTo(x2 - 8, centerY - pipeRadius + 4);
-        ctx.stroke();
-
-        // Metal coupling rings (joint collars)
+        // Joint collars
         const drawRing = (rx) => {
-          ctx.fillStyle = '#1e293b';
-          ctx.beginPath();
-          ctx.roundRect(rx - 3, centerY - pipeRadius - 2, 6, pipeRadius * 2 + 4, 2);
-          ctx.fill();
-
-          ctx.fillStyle = '#334155';
-          ctx.fillRect(rx - 1, centerY - pipeRadius - 1, 2, pipeRadius * 2 + 2);
+          ctx.fillStyle = '#000000';
+          ctx.fillRect(rx - 3, centerY - pipeRadius - 3, 6, pipeRadius * 2 + 6);
         };
 
         drawRing(x1);
@@ -222,39 +154,28 @@ export default function PipeHighwayCanvas({
       };
 
       // Draw Pipe 1 (Ingress)
-      drawGlassPipe(p1Start, p1End, isBufferFull, false, 'rgba(16, 185, 129, 0.6)');
+      drawGlassPipe(p1Start, p1End, isBufferFull, false);
 
       // Draw Pipe 2 (Egress)
-      drawGlassPipe(p2Start, p2End, false, isBufferEmpty, 'rgba(129, 140, 248, 0.6)');
+      drawGlassPipe(p2Start, p2End, false, isBufferEmpty);
 
-      // ─── 4. Gate Mechanism at Reservoir Entrance ───
-      // If buffer full, close the security gate!
+      // Gate Mechanism at Reservoir Entrance
       if (isBufferFull) {
-        ctx.save();
-        ctx.fillStyle = '#f43f5e';
-        ctx.shadowColor = 'rgba(244, 63, 94, 0.8)';
-        ctx.shadowBlur = 12;
-        ctx.fillRect(p1End - 8, centerY - pipeRadius - 3, 6, pipeRadius * 2 + 6);
-        ctx.restore();
-
-        // Gate Warning Label
-        ctx.fillStyle = '#fda4af';
-        ctx.font = 'bold 9px "JetBrains Mono", monospace';
+        ctx.fillStyle = '#e11d48';
+        ctx.fillRect(p1End - 8, centerY - pipeRadius - 4, 6, pipeRadius * 2 + 8);
+        ctx.fillStyle = '#e11d48';
+        ctx.font = 'bold 9px "Space Mono", monospace';
         ctx.textAlign = 'center';
         ctx.fillText('LOCKED', p1End - 5, centerY - pipeRadius - 8);
       }
 
-      // ─── 5. Update & Draw Ingress Capsules ───
+      // Ingress Capsules
       for (let i = state.ingressCapsules.length - 1; i >= 0; i--) {
         const cap = state.ingressCapsules[i];
-
-        // Backpressure stacking physics:
-        // If buffer full, capsules stop before the gate or behind the preceding capsule
         let stopX = p1End - 15;
         if (isBufferFull) {
-          // Calculate queue position
           const queueIndex = state.ingressCapsules.filter((c, idx) => idx > i).length;
-          stopX = p1End - 18 - (queueIndex * 26);
+          stopX = p1End - 18 - (queueIndex * 24);
         }
 
         if (cap.x < stopX) {
@@ -262,81 +183,36 @@ export default function PipeHighwayCanvas({
           if (cap.x > stopX) cap.x = stopX;
         }
 
-        // Particle trail
-        if (Math.random() < 0.35 && cap.x < stopX - 5) {
-          state.particles.push({
-            x: cap.x - 6,
-            y: centerY + (Math.random() * 8 - 4),
-            vx: -15,
-            vy: (Math.random() - 0.5) * 8,
-            life: 1.0,
-            color: 'rgba(16, 185, 129, 0.8)'
-          });
-        }
+        // Draw capsule
+        ctx.fillStyle = isBufferFull && cap.x >= stopX - 2 ? '#e11d48' : cap.color;
+        ctx.beginPath();
+        ctx.arc(cap.x, centerY, cap.size, 0, Math.PI * 2);
+        ctx.fill();
+        ctx.strokeStyle = '#000000';
+        ctx.lineWidth = 1.5;
+        ctx.stroke();
 
-        // Draw capsule body
-        drawCapsule(ctx, cap.x, centerY, cap.size, cap.color, cap.glowColor, isBufferFull && cap.x >= stopX - 2);
-
-        // Remove capsule if it reached the reservoir (when not full)
         if (!isBufferFull && cap.x >= stopX) {
           state.ingressCapsules.splice(i, 1);
-          // Spawn entry burst particles into reservoir
-          for (let p = 0; p < 5; p++) {
-            state.particles.push({
-              x: p1End + 5,
-              y: centerY + (Math.random() * 12 - 6),
-              vx: Math.random() * 40 + 20,
-              vy: (Math.random() - 0.5) * 30,
-              life: 0.8,
-              color: 'rgba(56, 189, 248, 0.9)'
-            });
-          }
         }
       }
 
-      // ─── 6. Update & Draw Egress Capsules ───
+      // Egress Capsules
       for (let i = state.egressCapsules.length - 1; i >= 0; i--) {
         const cap = state.egressCapsules[i];
         cap.x += cap.speed * dt;
 
-        // Particle trail
-        if (Math.random() < 0.35) {
-          state.particles.push({
-            x: cap.x - 6,
-            y: centerY + (Math.random() * 8 - 4),
-            vx: -15,
-            vy: (Math.random() - 0.5) * 8,
-            life: 1.0,
-            color: 'rgba(129, 140, 248, 0.8)'
-          });
-        }
+        ctx.fillStyle = cap.color;
+        ctx.beginPath();
+        ctx.arc(cap.x, centerY, cap.size, 0, Math.PI * 2);
+        ctx.fill();
+        ctx.strokeStyle = '#000000';
+        ctx.lineWidth = 1.5;
+        ctx.stroke();
 
-        drawCapsule(ctx, cap.x, centerY, cap.size, cap.color, cap.glowColor, false);
-
-        // Remove capsule when it enters the reader
         if (cap.x >= p2End - 8) {
           state.egressCapsules.splice(i, 1);
         }
-      }
-
-      // ─── 7. Update & Draw Particles ───
-      for (let p = state.particles.length - 1; p >= 0; p--) {
-        const part = state.particles[p];
-        part.x += part.vx * dt;
-        part.y += part.vy * dt;
-        part.life -= dt * 2.2;
-
-        if (part.life <= 0) {
-          state.particles.splice(p, 1);
-          continue;
-        }
-
-        ctx.fillStyle = part.color;
-        ctx.globalAlpha = Math.max(0, part.life);
-        ctx.beginPath();
-        ctx.arc(part.x, part.y, 1.8, 0, Math.PI * 2);
-        ctx.fill();
-        ctx.globalAlpha = 1.0;
       }
 
       animationFrameId = requestAnimationFrame(render);
@@ -358,38 +234,4 @@ export default function PipeHighwayCanvas({
       />
     </div>
   );
-}
-
-// Draw a 3D-styled glowing glass data capsule
-function drawCapsule(ctx, x, y, r, color, glow, isStalled) {
-  ctx.save();
-
-  // Glow halo
-  ctx.shadowColor = isStalled ? 'rgba(244, 63, 94, 0.8)' : glow;
-  ctx.shadowBlur = isStalled ? 14 : 10;
-
-  // Outer shell
-  const grad = ctx.createRadialGradient(x - 3, y - 3, 1, x, y, r);
-  if (isStalled) {
-    grad.addColorStop(0, '#fecdd3');
-    grad.addColorStop(0.5, '#f43f5e');
-    grad.addColorStop(1, '#881337');
-  } else {
-    grad.addColorStop(0, '#ffffff');
-    grad.addColorStop(0.3, color);
-    grad.addColorStop(1, '#070b14');
-  }
-
-  ctx.fillStyle = grad;
-  ctx.beginPath();
-  ctx.arc(x, y, r, 0, Math.PI * 2);
-  ctx.fill();
-
-  // Specular gleam (glass reflection)
-  ctx.fillStyle = 'rgba(255, 255, 255, 0.9)';
-  ctx.beginPath();
-  ctx.ellipse(x - 3, y - 3, r * 0.45, r * 0.25, -Math.PI / 4, 0, Math.PI * 2);
-  ctx.fill();
-
-  ctx.restore();
 }
