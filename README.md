@@ -139,14 +139,24 @@ producerConsumer/
 - **Maven**: 3.8+
 - **Node.js**: 18+ & npm
 
-### 1. Start the Java Kernel Backend
-In the project root, start the Javalin micro-server:
+### One-Command Startup
+In the project root, simply execute:
+```bash
+./run.sh
+```
+This automatically boots both the Java backend (port 8080) and React frontend (port 5173), and cleanly stops both processes when you press `Ctrl+C`.
+
+---
+
+### Manual Startup (Alternative)
+
+#### 1. Start the Java Kernel Backend
 ```bash
 mvn compile exec:java
 ```
 *The server boots in ~80ms and listens for WebSocket connections at `ws://localhost:8080/ws/telemetry`.*
 
-### 2. Start the Linux Kernel HUD Frontend
+#### 2. Start the Linux Kernel HUD Frontend
 In a separate terminal:
 ```bash
 cd frontend
