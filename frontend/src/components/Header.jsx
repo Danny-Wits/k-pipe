@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Volume2, VolumeX, GitBranch } from 'lucide-react';
+import { Volume2, VolumeX, GitBranch, Lock, Unlock } from 'lucide-react';
 import { sounds } from '../audio/SoundEffects';
 
 export default function Header({
@@ -71,15 +71,30 @@ export default function Header({
 
         {/* Right: Essential State Controls */}
         <div className="flex items-center gap-2.5 font-mono text-xs">
-          {/* Mutex State (No blinking) */}
+          {/* Mutex State Indicator */}
           <div
-            className={`px-3 py-1.5 font-bold uppercase border-2 border-black shadow-[2px_2px_0px_0px_#000000] ${
+            title={
+              isMutexLocked
+                ? 'pipe->mutex is LOCKED: A process is actively writing/reading the circular ring buffer in critical section.'
+                : 'pipe->mutex is UNLOCKED: Circular buffer is free; ready for the next write() or read() syscall.'
+            }
+            className={`flex items-center gap-1.5 px-3 py-1.5 font-bold uppercase border-2 border-black shadow-[2px_2px_0px_0px_#000000] cursor-help transition-colors ${
               isMutexLocked
                 ? 'bg-red-600 text-white'
                 : 'bg-white text-black'
             }`}
           >
-            {isMutexLocked ? 'MUTEX: LOCKED' : 'MUTEX: FREE'}
+            {isMutexLocked ? (
+              <>
+                <Lock className="w-3 h-3 text-white" />
+                <span>MUTEX: LOCKED</span>
+              </>
+            ) : (
+              <>
+                <Unlock className="w-3 h-3 text-black" />
+                <span>MUTEX: UNLOCKED</span>
+              </>
+            )}
           </div>
 
           {/* Sound Toggle */}
